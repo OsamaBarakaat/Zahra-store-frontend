@@ -13,14 +13,14 @@ export default function OffersBanner() {
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 sm:gap-12">
             <div className="text-center md:text-right max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs sm:text-sm font-bold mb-4 sm:mb-6 border border-white/20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-xs sm:text-sm font-bold mb-4 sm:mb-6 border border-white/20 shadow-sm">
                 <Flame size={16} className="text-[#E8A4A0]" />
-                <span>عروض حصرية لفترة محدودة 🔥</span>
+                <span className="tracking-wide">عروض حصرية لفترة محدودة</span>
               </div>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black mb-4 text-white leading-tight tracking-tight">
                 خصومات كبرى تصل إلى 35% على أطقم البياضات والمفروشات
               </h2>
-              <p className="text-sm sm:text-base lg:text-lg text-white/90 leading-relaxed font-normal">
+              <p className="text-sm sm:text-base lg:text-lg text-white/95 leading-relaxed font-normal">
                 جددي بيتك بأجود الخامات المصرية الأصيلة. العرض يشمل أطقم السرير، مفروشات الكنب والأنتريه، والبيجامات الحريمي القطنية.
               </p>
             </div>
@@ -28,7 +28,7 @@ export default function OffersBanner() {
             <div className="flex flex-col sm:flex-row items-center gap-4 flex-shrink-0 w-full md:w-auto">
               <Link
                 href="/offers"
-                className="w-full sm:w-auto h-13 sm:h-14 px-8 sm:px-10 rounded-full bg-white text-[#8B1A2E] font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl hover:bg-[#FAF7F5] transition-all hover:scale-102 active:scale-95"
+                className="w-full sm:w-auto h-12 sm:h-14 px-8 sm:px-10 rounded-full bg-white text-[#8B1A2E] font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl hover:bg-[#FAF7F5] transition-all hover:scale-102 active:scale-95 cursor-pointer"
               >
                 <Tag size={19} />
                 <span>شاهدي جميع العروض</span>

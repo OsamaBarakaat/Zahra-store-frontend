@@ -80,7 +80,7 @@ export default function ProductListContent({
               : "جميع المنتجات"}
           </h1>
           <p className="text-sm text-[#7A645A] mt-2">
-            عرض {filteredProducts.length} من أصل {initialProducts.length} منتج مختار بعناية
+            عرض <span className="tabular-nums font-bold text-[#8B1A2E]">{filteredProducts.length}</span> من أصل <span className="tabular-nums font-bold text-[#8B1A2E]">{initialProducts.length}</span> منتج مختار بعناية
           </p>
         </div>
 
@@ -89,7 +89,7 @@ export default function ProductListContent({
           {/* Mobile Filter Button */}
           <button
             onClick={() => setMobileFilterOpen(true)}
-            className="md:hidden flex-1 sm:flex-none h-12 px-5 rounded-2xl bg-white border border-[#EDE0D4] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95"
+            className="md:hidden flex-1 sm:flex-none h-12 px-5 rounded-2xl bg-white border border-[#EDE0D4] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
           >
             <SlidersHorizontal size={17} className="text-[#8B1A2E]" />
             <span>فلترة المنتجات</span>
@@ -128,7 +128,7 @@ export default function ProductListContent({
             {hasActiveFilters && (
               <button
                 onClick={clearAllFilters}
-                className="text-xs text-[#8B1A2E] font-bold hover:underline"
+                className="text-xs text-[#8B1A2E] font-bold hover:underline cursor-pointer"
               >
                 مسح الكل
               </button>
@@ -143,14 +143,14 @@ export default function ProductListContent({
             <div className="flex flex-col gap-1.5">
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={`flex items-center justify-between text-right px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                className={`flex items-center justify-between text-right px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                   selectedCategory === "all"
                     ? "bg-[#FDF8F5] text-[#8B1A2E] font-bold"
                     : "text-[#5C4A42] hover:bg-stone-50"
                 }`}
               >
                 <span>الكل</span>
-                <span className="text-xs opacity-60">{initialProducts.length}</span>
+                <span className="text-xs opacity-60 tabular-nums font-bold">{initialProducts.length}</span>
               </button>
               {categories.map((c) => {
                 const count = initialProducts.filter((p) => p.category === c.slug).length;
@@ -158,14 +158,14 @@ export default function ProductListContent({
                   <button
                     key={c.id}
                     onClick={() => setSelectedCategory(c.slug)}
-                    className={`flex items-center justify-between text-right px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
+                    className={`flex items-center justify-between text-right px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                       selectedCategory === c.slug
                         ? "bg-[#FDF8F5] text-[#8B1A2E] font-bold"
                         : "text-[#5C4A42] hover:bg-stone-50"
                     }`}
                   >
                     <span>{c.name}</span>
-                    <span className="text-xs opacity-60">{count}</span>
+                    <span className="text-xs opacity-60 tabular-nums font-bold">{count}</span>
                   </button>
                 );
               })}
@@ -181,7 +181,7 @@ export default function ProductListContent({
                 onChange={(e) => setOnlySale(e.target.checked)}
                 className="w-4 h-4 rounded text-[#8B1A2E] focus:ring-[#8B1A2E] accent-[#8B1A2E]"
               />
-              <span>العروض والتخفيضات فقط 🏷️</span>
+              <span>العروض والتخفيضات فقط</span>
             </label>
 
             <label className="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-medium text-[#1A0C08]">

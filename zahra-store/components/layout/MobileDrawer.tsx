@@ -58,7 +58,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         <div className="flex items-center justify-between p-5 border-b border-[#EDE0D4] bg-[#FDF8F5]">
           <Link href="/" onClick={onClose} className="relative w-28 h-12">
             <Image
-              src="/logo.png"
+              src="/logo/zahra-logo.png"
               alt="زهره ستور"
               fill
               className="object-contain object-right"

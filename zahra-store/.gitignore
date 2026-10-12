@@ -10,6 +10,14 @@
 !.yarn/releases
 !.yarn/versions
 
+# large 3D source files (> 50MB)
+*.obj
+*.mtl
+public/couch/couch.obj
+public/couch/couch.mtl
+public/couch/couch.glb
+public/couch/couch-simple.glb
+
 # testing
 /coverage
 

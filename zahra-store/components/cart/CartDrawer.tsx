@@ -157,7 +157,7 @@ export default function CartDrawer() {
               <ShoppingBag size={36} />
             </div>
             <h4 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: "var(--color-text)" }}>
-              سلتك فارغة حالياً 🛍️
+              سلتك فارغة حالياً
             </h4>
             <p style={{ fontSize: 14, color: "var(--color-muted)", maxWidth: 240, marginBottom: 24 }}>
               استكشفي أحدث مفروشاتنا وبياضاتنا واختاري ما يناسب بيتك وأناقتك.
@@ -215,7 +215,7 @@ export default function CartDrawer() {
                       }}
                     >
                       <Image
-                        src={item.image || "/logo.png"}
+                        src={item.image || "/logo/zahra-logo.png"}
                         alt={item.name}
                         fill
                         sizes="72px"
@@ -260,6 +260,17 @@ export default function CartDrawer() {
                           <span style={{ fontSize: 12, color: "var(--color-muted)", marginTop: 2, display: "block" }}>
                             {variantDetails}
                           </span>
+                        )}
+
+                        {item.customChairImage && (
+                          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                            <div style={{ position: "relative", width: 32, height: 32, borderRadius: 6, overflow: "hidden", border: "1px solid var(--color-border)", flexShrink: 0 }}>
+                              <Image src={item.customChairImage} alt="صورة كرسي العميل" fill style={{ objectFit: "cover" }} />
+                            </div>
+                            <span style={{ fontSize: 11, color: "var(--color-primary)", fontWeight: 700 }}>
+                              📸 صورة كرسي العميل مرفقة
+                            </span>
+                          </div>
                         )}
                       </div>
 

@@ -97,11 +97,11 @@ export default function CheckoutPage() {
       const disc = Math.round(subtotal * 0.1);
       setDiscountAmount(disc);
       setAppliedCoupon(code);
-      toast.success("تم تفعيل كود الخصم 10% بنجاح! 🏷️");
+      toast.success("تم تفعيل كود الخصم 10% بنجاح");
     } else if (code === "FREE" || code === "مجانا") {
       setDiscountAmount(shippingCost);
       setAppliedCoupon(code);
-      toast.success("تم تطبيق شحن مجاني بنجاح! 🚚");
+      toast.success("تم تطبيق شحن مجاني بنجاح");
     } else {
       toast.error("كود الخصم غير صحيح أو منتهي الصلاحية");
     }
@@ -196,7 +196,7 @@ export default function CheckoutPage() {
       <div className="container-zahra max-w-5xl mb-8 sm:mb-12">
         <div className="flex items-center justify-between pb-5 border-b border-[#EDE0D4]">
           <Link href="/" className="relative w-28 h-12 sm:w-32 sm:h-14">
-            <Image src="/logo.png" alt="زهره ستور" fill className="object-contain object-right" priority />
+            <Image src="/logo/zahra-logo.png" alt="زهره ستور" fill className="object-contain object-right" priority />
           </Link>
           <Link href="/cart" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#8B1A2E] hover:underline">
             <ShoppingBag size={18} />
@@ -226,7 +226,7 @@ export default function CheckoutPage() {
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-3 py-2 border-b border-stone-100 last:border-0">
                 <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100">
-                  <Image src={item.image} alt={item.name} fill className="object-cover" />
+                  <Image src={item.image || "/logo/zahra-logo.png"} alt={item.name} fill className="object-cover" />
                   <span className="absolute top-0 right-0 w-5 h-5 bg-[#8B1A2E] text-white text-[10px] font-bold rounded-bl-lg flex items-center justify-center">
                     {item.quantity}
                   </span>
@@ -236,6 +236,16 @@ export default function CheckoutPage() {
                   <p className="text-[11px] text-[#9E8075]">
                     {Object.values(item.selectedVariants || {}).join(" • ")}
                   </p>
+                  {item.customChairImage && (
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <div className="relative w-6 h-6 rounded-md overflow-hidden border border-stone-200 bg-stone-100 flex-shrink-0">
+                        <Image src={item.customChairImage} alt="صورة الكرسي" fill className="object-cover" />
+                      </div>
+                      <span className="text-[10px] font-bold text-[#8B1A2E]">
+                        📸 صورة الكرسي مرفقة
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <span className="text-xs font-bold text-[#1A0C08]">
                   {formatPrice(item.price * item.quantity)}
@@ -618,11 +628,11 @@ export default function CheckoutPage() {
                         className="w-4 h-4 accent-[#8B1A2E]"
                       />
                       <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
-                        الدفع عبر إنستاباي (InstaPay) ⚡
+                        الدفع عبر إنستاباي (InstaPay)
                       </span>
                     </div>
                     <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                      خصم 50% على الشحن! 🔥
+                      خصم 50% على الشحن
                     </span>
                   </label>
 
@@ -636,7 +646,7 @@ export default function CheckoutPage() {
                         <button
                           type="button"
                           onClick={() => copyToClipboard("zahrastore@instapay", "insta")}
-                          className="btn-outline h-9 px-3.5 text-xs flex items-center gap-1.5"
+                          className="btn-outline h-9 px-3.5 text-xs flex items-center gap-1.5 cursor-pointer"
                         >
                           {copiedInsta ? <Check size={14} /> : <Copy size={14} />}
                           <span>{copiedInsta ? "تم النسخ" : "نسخ العنوان"}</span>
@@ -644,7 +654,7 @@ export default function CheckoutPage() {
                       </div>
 
                       <p className="text-emerald-700 font-bold leading-relaxed">
-                        🎉 تم تطبيق خصم 50% على مصاريف الشحن لتصبح {formatPrice(shippingCost)} فقط!
+                        تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط!
                       </p>
 
                       <input
@@ -724,7 +734,7 @@ export default function CheckoutPage() {
               {items.map((item) => (
                 <div key={item.id} className="flex items-center gap-3">
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                    <Image src={item.image || "/logo/zahra-logo.png"} alt={item.name} fill className="object-cover" />
                     <span className="absolute top-0 right-0 w-5 h-5 bg-[#8B1A2E] text-white text-[10px] font-black rounded-bl-lg flex items-center justify-center">
                       {item.quantity}
                     </span>
@@ -734,6 +744,16 @@ export default function CheckoutPage() {
                     <p className="text-[11px] text-[#9E8075] mt-0.5">
                       {Object.values(item.selectedVariants || {}).join(" • ")}
                     </p>
+                    {item.customChairImage && (
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <div className="relative w-7 h-7 rounded-md overflow-hidden border border-stone-200 bg-stone-100 flex-shrink-0">
+                          <Image src={item.customChairImage} alt="صورة الكرسي" fill className="object-cover" />
+                        </div>
+                        <span className="text-[10px] font-bold text-[#8B1A2E] bg-[#FDF8F5] px-1.5 py-0.5 rounded border border-[#EDE0D4]">
+                          📸 صورة الكرسي مرفقة للطلب العمولة
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <span className="text-xs font-bold text-[#1A0C08]">
                     {formatPrice(item.price * item.quantity)}

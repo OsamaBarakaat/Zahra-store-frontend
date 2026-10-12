@@ -14,7 +14,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   if (!images || images.length === 0) {
     return (
       <div className="relative aspect-square w-full rounded-2xl bg-stone-100 overflow-hidden border border-[#EDE0D4]">
-        <Image src="/logo.png" alt={productName} fill className="object-contain p-8" />
+        <Image src="/logo/zahra-logo.png" alt={productName} fill className="object-contain p-8" />
       </div>
     );
   }

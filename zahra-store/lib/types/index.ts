@@ -7,10 +7,12 @@ export interface ProductImage {
 
 export interface ProductVariant {
   id: string;
-  name: string;       // e.g. "أبيض", "L", "قطن"
-  type: "color" | "size" | "material";
+  name: string;       // e.g. "أبيض", "L", "قطن", "عمولة"
+  type: "color" | "size" | "material" | "pattern" | "cover_type";
   value: string;      // hex for color, label for others
   available: boolean;
+  priceModifier?: number; // e.g. +200 EGP for custom
+  image?: string;     // optional texture or preview image
 }
 
 export interface Product {
@@ -36,6 +38,7 @@ export interface Product {
   tags?: string[];
   material?: string;
   dimensions?: string;
+  isChairCover?: boolean;   // Flag for chair cover customization flow
 }
 
 // ─── Category ────────────────────────────────────────────────────────────
@@ -70,7 +73,9 @@ export interface CartItem {
   originalPrice?: number;
   image: string;
   quantity: number;
-  selectedVariants: Record<string, string>; // { color: "أبيض", size: "L" }
+  selectedVariants: Record<string, string>; // { "لون القماش": "وردي غامق", "شكل النقشة": "مربعات وجواها زهور", "نوع التلبيسة": "عمولة (+200 جنيه)" }
+  customChairImage?: string; // photo uploaded by customer for custom chair order
+  customNotes?: string;
 }
 
 // ─── Wishlist ─────────────────────────────────────────────────────────────

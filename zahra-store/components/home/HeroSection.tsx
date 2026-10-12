@@ -49,10 +49,10 @@ export default function HeroSection() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs sm:text-sm font-bold w-fit mb-4 sm:mb-6 border border-white/25 shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl text-white text-xs sm:text-sm font-bold w-fit mb-4 sm:mb-6 border border-white/20 shadow-lg"
               >
                 <Sparkles size={16} className="text-[#E8A4A0]" />
-                <span>تشكيلة الموسم الجديدة وصلت الآن ✨</span>
+                <span className="tracking-wide">تشكيلة الموسم الجديدة وصلت الآن</span>
               </motion.div>
 
               {/* Headline */}
@@ -60,7 +60,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.18] sm:leading-[1.15] mb-4 sm:mb-6 text-white drop-shadow-md tracking-tight"
+                className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.2] sm:leading-[1.18] mb-4 sm:mb-6 text-white drop-shadow-md tracking-tight"
               >
                 فخامة ودفء <br />
                 <span className="text-[#E8A4A0]">لكل بيت مصري أصيل</span>
@@ -71,9 +71,9 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-sm sm:text-lg lg:text-xl text-white/90 font-medium mb-8 sm:mb-10 max-w-xl leading-relaxed sm:leading-loose"
+                className="text-sm sm:text-lg lg:text-xl text-white/95 font-medium mb-8 sm:mb-10 max-w-xl leading-relaxed sm:leading-loose drop-shadow-sm"
               >
-                أرقى أطقم البياضات القطنية، مفروشات الأنتريه والركنة، الإسدالات، والطرح والبيجامات الحريمي المصممة بأعلى جودة لراحتك وأناقتك.
+                أرقى أطقم البياضات القطنية، مفروشات وتلبيسات الكراسي والأنتريه، والإسدالات والبيجامات الحريمي المصممة بأعلى جودة لراحتك وأناقتك.
               </motion.p>
 
               {/* Action Buttons */}
@@ -85,7 +85,7 @@ export default function HeroSection() {
               >
                 <Link
                   href="/products"
-                  className="btn-primary h-13 sm:h-14 px-8 sm:px-10 text-sm sm:text-base font-bold shadow-xl shadow-[#8B1A2E]/35 flex items-center gap-2.5 active:scale-95 hover:scale-103 transition-all"
+                  className="btn-primary h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base font-bold shadow-xl shadow-[#8B1A2E]/35 flex items-center gap-2.5 active:scale-95 hover:scale-103 transition-all"
                 >
                   <span>تسوقي الآن</span>
                   <ArrowLeft size={19} />
@@ -93,9 +93,9 @@ export default function HeroSection() {
 
                 <Link
                   href="/offers"
-                  className="h-13 sm:h-14 px-7 sm:px-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 text-white font-bold text-sm sm:text-base flex items-center justify-center transition-all hover:scale-102 active:scale-95 shadow-md"
+                  className="h-12 sm:h-14 px-7 sm:px-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 text-white font-bold text-sm sm:text-base flex items-center justify-center transition-all hover:scale-102 active:scale-95 shadow-md"
                 >
-                  <span>تخفيضات وعروض حصرية 🏷️</span>
+                  <span>العروض والتخفيضات الحصرية</span>
                 </Link>
               </motion.div>
             </div>
@@ -107,22 +107,22 @@ export default function HeroSection() {
           {[
             {
               title: "معاينة قبل الدفع",
-              desc: "ادفعي بعد ما تشوفي الخامة بنفسك",
+              desc: "ادفعي بعد ما تشوفي الخامة بنفسك وتتأكدي من المقاس",
               icon: ShieldCheck,
             },
             {
               title: "توصيل لجميع المحافظات",
-              desc: "شحن سريع لحد باب بيتك في مصر",
+              desc: "شحن سريع وآمن لحد باب بيتك في كل محافظات مصر",
               icon: Truck,
             },
             {
               title: "طرق دفع مرنة وسهلة",
-              desc: "كاش أو إنستاباي أو فودافون كاش",
+              desc: "كاش عند الاستلام أو إنستاباي أو محافظ إلكترونية",
               icon: Sparkles,
             },
             {
               title: "قطن مصري أصيل 100%",
-              desc: "خامات ممتازة وناعمة تدوم معكِ",
+              desc: "خامات ممتازة وناعمة تدوم معكِ وتتحمل الغسيل المتكرر",
               icon: RotateCcw,
             },
           ].map((item, idx) => {
@@ -136,7 +136,7 @@ export default function HeroSection() {
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#EDE0D4] shadow-xs hover:border-[#8B1A2E]/40 hover:shadow-md transition-all duration-300"
               >
-                <div className="w-13 h-13 rounded-2xl bg-[#FDF8F5] border border-[#E8A4A0]/40 flex items-center justify-center text-[#8B1A2E] flex-shrink-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FDF8F5] border border-[#E8A4A0]/40 flex items-center justify-center text-[#8B1A2E] flex-shrink-0">
                   <Icon size={24} />
                 </div>
                 <div>

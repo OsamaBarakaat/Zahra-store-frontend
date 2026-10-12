@@ -118,6 +118,16 @@ export default function OrderConfirmationPage() {
                       <p className="text-[11px] text-[#9E8075]">
                         الكمية: {item.quantity} • {Object.values(item.selectedVariants || {}).join(" - ")}
                       </p>
+                      {item.customChairImage && (
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <div className="relative w-7 h-7 rounded-md overflow-hidden border border-stone-200 bg-stone-100 flex-shrink-0">
+                            <Image src={item.customChairImage} alt="صورة الكرسي المرفقة" fill className="object-cover" />
+                          </div>
+                          <span className="text-[10px] font-bold text-[#8B1A2E]">
+                            📸 صورة الكرسي مرفقة للتفصيل العمولة
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <span className="text-xs font-bold text-[#1A0C08]">

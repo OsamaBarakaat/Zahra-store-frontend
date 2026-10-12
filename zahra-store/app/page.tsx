@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Sparkles, Flame } from "lucide-react";
 import HeroSection from "@/components/home/HeroSection";
 import CategorySlider from "@/components/home/CategorySlider";
+import ScrollSofaCover3D from "@/components/home/ScrollSofaCover3D";
 import OffersBanner from "@/components/home/OffersBanner";
 import WhyUsSection from "@/components/home/WhyUsSection";
 import SocialProofSection from "@/components/home/SocialProofSection";
@@ -24,7 +25,10 @@ export default async function HomePage() {
       {/* 2. Categories Section (Spacious Apple Cards) */}
       <CategorySlider categories={categories} />
 
-      {/* 3. Featured Products Grid (With Apple-style breathing room) */}
+      {/* 3. Interactive Sofa Bedding Draping Experience (Spreads across sofa as you scroll down) */}
+      <ScrollSofaCover3D />
+
+      {/* 4. Featured Products Grid (With Apple-style breathing room) */}
       <section className="py-24 sm:py-32 lg:py-40 bg-white">
         <div className="container-zahra">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-14 sm:mb-20">
@@ -67,7 +71,7 @@ export default async function HomePage() {
                   <span>تخفيضات كبرى لفترة محدودة</span>
                 </div>
                 <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#1A0C08] tracking-tight">
-                  أحدث العروض والخصومات 🔥
+                  أحدث العروض والخصومات
                 </h2>
                 <p className="text-sm sm:text-base text-[#7A645A] mt-3 max-w-xl leading-relaxed">
                   اغتنمي الفرصة وتسوقي منتجاتك المفضلة بأسعار مخفضة
@@ -77,7 +81,7 @@ export default async function HomePage() {
                 href="/offers"
                 className="btn-primary h-13 px-8 text-xs sm:text-sm font-bold flex items-center gap-2.5 self-start sm:self-auto shadow-md"
               >
-                <span>جميع العروض ({saleProducts.length})</span>
+                <span>جميع العروض <span className="tabular-nums font-black">({saleProducts.length})</span></span>
                 <ArrowLeft size={16} />
               </Link>
             </div>

@@ -1,6 +1,50 @@
-﻿import { Product } from '@/lib/types';
+import { Product } from '@/lib/types';
 
 export const products: Product[] = [
+  {
+    id: 'p0',
+    slug: 'chair-cover-elastic-jacquard',
+    name: 'طقم تلبيسات كراسي سفرة 6 قطع ليكرا جاكار مطاطية (عادي وعمولة)',
+    description: 'طقم تلبيسات متكامل يباع طقم على بعضه يشمل 6 تلبيسات كراسي لطقم سفرة 6 كراسي بالكامل. مصنوع من خامة الليكرا الجاكار المطاطية الفاخرة المقاومة للبقع وسهلة الفك والتركيب والغسيل. متوفر بـ 10 ألوان غنية، ونقشتين بارزتين مختلفتين، مع إمكانية الاختيار بين المقاس القياسي أو التفصيل العمولة بالمللي على مقاس كراسيك (+200 جنيه للطقم بالكامل) مع إرفاق صورة الكرسي.',
+    price: 150,
+    originalPrice: 220,
+    discount: 32,
+    images: [
+      { id: 'img-chair-1', url: '/products/chair-cover/colors-grid.jpg', alt: 'ألوان تلبيسة الكرسي الـ 10' },
+      { id: 'img-chair-2', url: '/products/chair-cover/pattern-squares.jpg', alt: 'نقشة مربعات وجواها زهور' },
+      { id: 'img-chair-3', url: '/products/chair-cover/pattern-floral.jpg', alt: 'نقشة زهور دائرية وأوراق شجر' },
+    ],
+    category: 'living-room',
+    categoryName: 'مفروشات أنتريه وركنة',
+    isChairCover: true,
+    variants: [
+      // 10 Colors from user image
+      { id: 'col-1', name: 'رمادي فاتح', type: 'color', value: '#9BA8B5', available: true },
+      { id: 'col-2', name: 'وردي غامق', type: 'color', value: '#A34E62', available: true },
+      { id: 'col-3', name: 'أزرق', type: 'color', value: '#006C9C', available: true },
+      { id: 'col-4', name: 'بيج', type: 'color', value: '#C4B1A0', available: true },
+      { id: 'col-5', name: 'أحمر غامق', type: 'color', value: '#8D0A1C', available: true },
+      { id: 'col-6', name: 'كريمي', type: 'color', value: '#D2C1A8', available: true },
+      { id: 'col-7', name: 'بني', type: 'color', value: '#4D3227', available: true },
+      { id: 'col-8', name: 'رمادي', type: 'color', value: '#738090', available: true },
+      { id: 'col-9', name: 'رمادي غامق', type: 'color', value: '#3C424E', available: true },
+      { id: 'col-10', name: 'بترولي', type: 'color', value: '#045266', available: true },
+      // 2 Patterns
+      { id: 'pat-1', name: 'مربعات وجواها زهور', type: 'pattern', value: 'مربعات', available: true, image: '/products/chair-cover/pattern-squares.jpg' },
+      { id: 'pat-2', name: 'زهور دائرية وأوراق شجر', type: 'pattern', value: 'زهور دائرية', available: true, image: '/products/chair-cover/pattern-floral.jpg' },
+      // 2 Cover Types (Standard vs Custom +200 EGP)
+      { id: 'typ-1', name: 'عادي (للكرسي الخشبي القياسي)', type: 'cover_type', value: 'standard', available: true, priceModifier: 0 },
+      { id: 'typ-2', name: 'عمولة (تفصيل مخصوص على شكل ومقاس كرسيك)', type: 'cover_type', value: 'custom', available: true, priceModifier: 200 },
+    ],
+    rating: 4.9,
+    reviewCount: 318,
+    isNew: true,
+    isFeatured: true,
+    isOnSale: true,
+    inStock: true,
+    stockCount: 85,
+    material: 'ليكرا جاكار مطاطية فاخرة',
+  },
   {
     id: 'p1',
     slug: 'set-bedding-floral-roses',

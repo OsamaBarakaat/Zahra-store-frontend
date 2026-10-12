@@ -324,7 +324,7 @@ export default function SearchModal() {
                         }}
                       >
                         <Image
-                          src={product.images[0]?.url || "/logo.png"}
+                          src={product.images[0]?.url || "/logo/zahra-logo.png"}
                           alt={product.name}
                           fill
                           sizes="56px"

@@ -74,7 +74,7 @@ export default function Header() {
           >
             <div className="relative w-28 h-12 sm:w-32 sm:h-14">
               <Image
-                src="/logo.png"
+                src="/logo/zahra-logo.png"
                 alt="زهره ستور"
                 fill
                 priority
@@ -191,7 +191,7 @@ export default function Header() {
                           >
                             <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200 group-hover:scale-105 transition-transform">
                               <Image
-                                src={p.images[0]?.url || "/logo.png"}
+                                src={p.images[0]?.url || "/logo/zahra-logo.png"}
                                 alt={p.name}
                                 fill
                                 sizes="48px"
@@ -202,7 +202,7 @@ export default function Header() {
                               <p className="text-sm font-bold text-[#1A0C08] group-hover:text-[#8B1A2E] truncate">
                                 {p.name}
                               </p>
-                              <p className="text-xs font-extrabold text-[#8B1A2E] mt-1">
+                              <p className="text-xs font-black text-[#8B1A2E] mt-1 tabular-nums">
                                 {formatPrice(p.price)}
                               </p>
                             </div>
@@ -269,7 +269,7 @@ export default function Header() {
             <button
               onClick={openSearch}
               aria-label="البحث في الموقع"
-              className="w-11 h-11 rounded-full flex items-center justify-center text-[#5C4A42] hover:text-[#8B1A2E] hover:bg-white/90 border border-transparent hover:border-[#EDE0D4] transition-all duration-200"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-[#5C4A42] hover:text-[#8B1A2E] hover:bg-white/90 border border-transparent hover:border-[#EDE0D4] transition-all duration-200 cursor-pointer"
             >
               <Search size={20} />
             </button>
@@ -282,7 +282,7 @@ export default function Header() {
             >
               <Heart size={20} />
               {wishlistCount > 0 && (
-                <span className="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-[#8B1A2E] text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-[#8B1A2E] text-white text-[10px] font-bold flex items-center justify-center tabular-nums">
                   {wishlistCount}
                 </span>
               )}
@@ -292,12 +292,12 @@ export default function Header() {
             <button
               onClick={openCart}
               aria-label={`السلة — ${itemCount} منتج`}
-              className="relative h-11 px-3.5 sm:px-4 rounded-full bg-white border border-[#EDE0D4] hover:border-[#8B1A2E] shadow-xs flex items-center gap-2 text-[#1A0C08] hover:text-[#8B1A2E] transition-all duration-200 active:scale-95"
+              className="relative h-11 px-3.5 sm:px-4 rounded-full bg-white border border-[#EDE0D4] hover:border-[#8B1A2E] shadow-xs flex items-center gap-2 text-[#1A0C08] hover:text-[#8B1A2E] transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <ShoppingBag size={19} className="text-[#8B1A2E]" />
               <span className="hidden xs:inline text-xs font-bold">السلة</span>
               {itemCount > 0 && (
-                <span className="w-5 h-5 rounded-full bg-[#8B1A2E] text-white text-[11px] font-extrabold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-[#8B1A2E] text-white text-[11px] font-black flex items-center justify-center tabular-nums shadow-xs">
                   {itemCount}
                 </span>
               )}

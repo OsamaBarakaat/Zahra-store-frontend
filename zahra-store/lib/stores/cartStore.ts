@@ -29,12 +29,16 @@ export const useCartStore = create<CartStore>()(
 
       addItem: (newItem) => {
         set((state) => {
-          // Check if same product+variants already in cart
-          const variantKey = JSON.stringify(newItem.selectedVariants);
+          // Check if same product+variants+customImage already in cart
+          const variantKey =
+            JSON.stringify(newItem.selectedVariants) +
+            (newItem.customChairImage ? newItem.customChairImage.slice(-50) : '');
           const existing = state.items.find(
             (i) =>
               i.productId === newItem.productId &&
-              JSON.stringify(i.selectedVariants) === variantKey
+              JSON.stringify(i.selectedVariants) +
+                (i.customChairImage ? i.customChairImage.slice(-50) : '') ===
+                variantKey
           );
           if (existing) {
             return {

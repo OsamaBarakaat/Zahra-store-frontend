@@ -103,7 +103,7 @@ export default function Footer() {
                 <Link href="/" className="inline-block mb-4">
                   <div className="relative w-36 h-16">
                     <Image
-                      src="/logo.png"
+                      src="/logo/zahra-logo.png"
                       alt="زهره ستور"
                       fill
                       className="object-contain object-right brightness-0 invert"
@@ -251,15 +251,15 @@ export default function Footer() {
 
             {/* Payment methods badges */}
             <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="text-xs text-white/50 ml-1">طرق الدفع المدعومة:</span>
+              <span className="text-xs text-white/50 ml-1">طرق الدفع المتاحة:</span>
               <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-bold border border-white/10">
-                الدفع عند الاستلام 💵
+                الدفع عند الاستلام (كاش)
               </span>
               <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-bold border border-white/10">
-                فودافون كاش 📱
+                فودافون كاش والمحافظ الإلكترونية
               </span>
               <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
-                إنستاباي (خصم 50% شحن) ⚡
+                إنستاباي InstaPay (خصم 50% على الشحن)
               </span>
             </div>
           </div>

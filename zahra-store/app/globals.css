@@ -8,6 +8,8 @@
   --color-primary-light: #A93048;   /* lighter crimson */
   --color-primary-dark:  #6B1322;   /* darker crimson */
   --color-secondary:     #C4876A;   /* warm gold/tan (logo house) */
+  --color-gold-rich:     #B37355;   /* rich burnished gold */
+  --color-gold-pale:     #FAF2EC;   /* pale gold highlight */
   --color-accent:        #E8A4A0;   /* soft rose pink (logo floral) */
   --color-blush:         #F2D4CC;   /* very light blush */
   --color-warm-white:    #FDF8F5;   /* warm off-white background */
@@ -19,21 +21,24 @@
   --color-text-soft:     #5C4A42;
 
   /* Spacing */
-  --header-height: 64px;
-  --header-height-mobile: 56px;
+  --header-height: 72px;
+  --header-height-mobile: 60px;
 
-  /* Shadows */
-  --shadow-card:   0 2px 16px rgba(139, 26, 46, 0.07);
-  --shadow-hover:  0 8px 32px rgba(139, 26, 46, 0.15);
-  --shadow-modal:  0 24px 64px rgba(26, 12, 8, 0.18);
-  --shadow-toast:  0 4px 24px rgba(26, 12, 8, 0.14);
+  /* Impeccable Shadow System */
+  --shadow-subtle: 0 1px 3px rgba(26, 12, 8, 0.04), 0 1px 2px rgba(26, 12, 8, 0.02);
+  --shadow-card:   0 4px 20px -2px rgba(139, 26, 46, 0.06), 0 2px 6px -1px rgba(26, 12, 8, 0.04);
+  --shadow-hover:  0 20px 35px -4px rgba(139, 26, 46, 0.12), 0 10px 15px -3px rgba(26, 12, 8, 0.05);
+  --shadow-luxury: 0 25px 60px -12px rgba(139, 26, 46, 0.16);
+  --shadow-modal:  0 30px 70px rgba(26, 12, 8, 0.22);
+  --shadow-toast:  0 8px 30px rgba(26, 12, 8, 0.12);
 
   /* Border Radius */
-  --radius-sm:  6px;
-  --radius-md:  12px;
-  --radius-lg:  18px;
-  --radius-xl:  24px;
-  --radius-full: 999px;
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+  --radius-2xl: 36px;
+  --radius-full: 9999px;
 }
 
 /* ─── Tailwind v4 Theme Extension ───────────────────────────────────────── */
@@ -42,6 +47,8 @@
   --color-primary-light:   var(--color-primary-light);
   --color-primary-dark:    var(--color-primary-dark);
   --color-secondary:       var(--color-secondary);
+  --color-gold-rich:       var(--color-gold-rich);
+  --color-gold-pale:       var(--color-gold-pale);
   --color-accent:          var(--color-accent);
   --color-blush:           var(--color-blush);
   --color-warm-white:      var(--color-warm-white);
@@ -52,7 +59,7 @@
   --color-text:            var(--color-text);
   --color-text-soft:       var(--color-text-soft);
 
-  --font-sans: 'Cairo', system-ui, sans-serif;
+  --font-sans: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 /* ─── Base Reset & RTL (Inside @layer base so Tailwind utilities override correctly) ─── */
@@ -93,8 +100,8 @@
 
   :focus-visible {
     outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
 
@@ -111,11 +118,43 @@
 }
 
 /* ─── Utilities ──────────────────────────────────────────────────────────── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 .container-zahra {
   width: 100%;
   max-width: 1360px;
   margin-inline: auto;
   padding-inline: clamp(20px, 5vw, 64px);
+}
+
+/* Glass Panels conforming to Impeccable restraint & texture */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(237, 224, 212, 0.85);
+}
+
+.glass-panel-dark {
+  background: rgba(26, 12, 8, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.luxury-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-card:hover {
+  border-color: rgba(139, 26, 46, 0.3);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
 }
 
 .btn-primary {
@@ -132,7 +171,7 @@
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s ease, box-shadow 0.25s ease;
   min-height: 48px;
   white-space: nowrap;
 }

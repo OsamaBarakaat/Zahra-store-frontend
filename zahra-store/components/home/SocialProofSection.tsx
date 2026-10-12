@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Star, Heart } from "lucide-react";
+import { Star, Heart, CheckCircle2 } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/SocialIcons";
 import { motion } from "framer-motion";
 
@@ -36,7 +36,7 @@ export default function SocialProofSection() {
             <span>آراء وتجارب عميلاتنا</span>
           </div>
           <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#1A0C08] tracking-tight">
-            ثقتكم هي سر نجاحنا ❤️
+            ثقتكم هي سر تميزنا
           </h2>
           <p className="text-sm sm:text-base text-[#7A645A] mt-3">
             أكثر من 5,000 سيدة مصرية وثقت بمنتجاتنا في كل المحافظات
@@ -56,10 +56,16 @@ export default function SocialProofSection() {
               className="p-8 sm:p-10 rounded-[30px] bg-white border border-[#EDE0D4] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center gap-1.5 text-amber-400 mb-5">
-                  {[...Array(rev.rating)].map((_, i) => (
-                    <Star key={i} size={18} className="fill-amber-400" />
-                  ))}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-1.5 text-amber-400">
+                    {[...Array(rev.rating)].map((_, i) => (
+                      <Star key={i} size={18} className="fill-amber-400" />
+                    ))}
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                    <CheckCircle2 size={12} className="text-emerald-600" />
+                    <span>عميلة موثقة</span>
+                  </span>
                 </div>
                 <p className="text-sm sm:text-base text-[#1A0C08] leading-relaxed mb-6 font-medium">
                   &ldquo;{rev.text}&rdquo;
@@ -96,9 +102,9 @@ export default function SocialProofSection() {
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline text-xs sm:text-sm font-bold h-12 px-6 flex-shrink-0 hover:scale-102"
+            className="btn-outline text-xs sm:text-sm font-bold h-12 px-6 flex-shrink-0 hover:scale-102 cursor-pointer"
           >
-            متابعة الحساب 🌸
+            متابعة الحساب
           </a>
         </motion.div>
       </div>

@@ -59,14 +59,14 @@ export default function CartPage() {
             <ShoppingBag size={40} />
           </div>
           <h1 className="text-2xl font-black text-[#1A0C08] mb-2">
-            سلة التسوق فارغة 🛍️
+            سلة التسوق فارغة
           </h1>
           <p className="text-sm text-[#9E8075] mb-6">
             يبدو أنكِ لم تضيفي أي منتجات للسلة بعد. استكشفي أحدث تشكيلاتنا واختاري ما يسعدكِ.
           </p>
           <Link
             href="/products"
-            className="btn-primary w-full h-12 text-sm font-bold flex items-center justify-center gap-2"
+            className="btn-primary w-full h-12 text-sm font-bold flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>ابدأي التسوق الآن</span>
             <ArrowLeft size={16} />
@@ -80,7 +80,7 @@ export default function CartPage() {
     <div className="container-zahra py-8 sm:py-12">
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#EDE0D4]">
         <h1 className="text-2xl sm:text-3xl font-black text-[#1A0C08]">
-          سلة المشتريات ({itemCount} منتج)
+          سلة المشتريات <span className="tabular-nums font-bold text-lg text-[#8B1A2E]">({itemCount} منتج)</span>
         </h1>
         <Link
           href="/products"
@@ -108,7 +108,7 @@ export default function CartPage() {
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden flex-shrink-0 bg-stone-100 border border-stone-200">
                     <Image
-                      src={item.image || "/logo.png"}
+                      src={item.image || "/logo/zahra-logo.png"}
                       alt={item.name}
                       fill
                       sizes="96px"
@@ -128,6 +128,22 @@ export default function CartPage() {
                       <p className="text-xs text-[#9E8075] mt-1">
                         {variantDetails}
                       </p>
+                    )}
+
+                    {item.customChairImage && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <div className="relative w-9 h-9 rounded-lg overflow-hidden border border-[#EDE0D4] bg-stone-100 flex-shrink-0">
+                          <Image
+                            src={item.customChairImage}
+                            alt="صورة كرسي العميل"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <span className="text-[11px] font-bold text-[#8B1A2E] bg-[#FDF8F5] px-2 py-0.5 rounded-full border border-[#EDE0D4]">
+                          📸 صورة كرسي العميل مرفقة للتفصيل
+                        </span>
+                      </div>
                     )}
 
                     <div className="text-xs sm:text-sm font-extrabold text-[#8B1A2E] mt-2">
