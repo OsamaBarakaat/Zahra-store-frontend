@@ -164,11 +164,11 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Validate
+    // Validate (phone and contact are optional per requirements)
     const formErrors = validateCheckoutForm({
       firstName: formData.firstName,
       lastName: formData.lastName,
-      phone: formData.phone || formData.contact,
+      phone: formData.contact || formData.phone,
       governorate: formData.governorate,
       city: formData.city,
       street: formData.address,
@@ -184,13 +184,20 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      const primaryContact = (formData.contact || "").trim();
+      const secondaryPhone = (formData.phone || "").trim();
+      const contactPhone = primaryContact.includes("@") 
+        ? (secondaryPhone || "") 
+        : (primaryContact || secondaryPhone || "");
+      const contactEmail = primaryContact.includes("@") ? primaryContact : undefined;
+
       const order = await OrderService.createOrder({
         items,
         customer: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone || formData.contact,
-          email: formData.contact.includes("@") ? formData.contact : undefined,
+          firstName: formData.firstName || "عميل زهرة",
+          lastName: formData.lastName || "",
+          phone: contactPhone || "غير مسجل",
+          email: contactEmail,
         },
         address: {
           governorate: formData.governorate,
@@ -399,21 +406,18 @@ export default function CheckoutPage() {
 
               <div>
                 <label className="text-xs sm:text-sm font-bold text-[#5C4A42] block mb-2">
-                  رقم الهاتف أو البريد الإلكتروني <span className="text-red-500">*</span>
+                  رقم الهاتف أو البريد الإلكتروني <span className="text-stone-400 font-normal text-xs">(اختياري)</span>
                 </label>
                 <input
                   type="text"
                   value={formData.contact}
                   onChange={(e) => {
-                    setFormData({ ...formData, contact: e.target.value, phone: formData.phone || e.target.value });
+                    setFormData({ ...formData, contact: e.target.value });
                     if (errors.phone) setErrors({ ...errors, phone: "" });
                   }}
                   placeholder="01012345678 أو email@example.com"
-                  className={`input-field ${errors.phone ? "error" : ""}`}
+                  className="input-field"
                 />
-                {errors.phone && (
-                  <p className="text-xs text-red-600 font-bold mt-1.5">{errors.phone}</p>
-                )}
               </div>
 
               <label className="flex items-center gap-2.5 mt-4 cursor-pointer">
@@ -636,20 +640,20 @@ export default function CheckoutPage() {
                       : "border-stone-200 bg-stone-50/50 hover:border-stone-300"
                   }`}
                 >
-                  <label className="flex items-center justify-between cursor-pointer">
-                    <div className="flex items-center gap-3">
+                  <label className="flex flex-wrap items-center justify-between gap-2.5 cursor-pointer">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <input
                         type="radio"
                         name="payment"
                         checked={paymentMethod === "cod"}
                         onChange={() => setPaymentMethod("cod")}
-                        className="w-4 h-4 accent-[#8B1A2E]"
+                        className="w-4 h-4 accent-[#8B1A2E] shrink-0"
                       />
                       <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
                         الدفع عند الاستلام (Cash on Delivery) 💵
                       </span>
                     </div>
-                    <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                    <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 shrink-0">
                       وفر 50% بالدفع الإلكتروني
                     </span>
                   </label>
@@ -678,20 +682,20 @@ export default function CheckoutPage() {
                       : "border-stone-200 bg-stone-50/50 hover:border-stone-300"
                   }`}
                 >
-                  <label className="flex items-center justify-between cursor-pointer">
-                    <div className="flex items-center gap-3">
+                  <label className="flex flex-wrap items-center justify-between gap-2.5 cursor-pointer">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <input
                         type="radio"
                         name="payment"
                         checked={paymentMethod === "vodafone_cash"}
                         onChange={() => setPaymentMethod("vodafone_cash")}
-                        className="w-4 h-4 accent-[#8B1A2E]"
+                        className="w-4 h-4 accent-[#8B1A2E] shrink-0"
                       />
                       <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
                         فودافون كاش والمحافظ الإلكترونية (Vodafone Cash) 📱
                       </span>
                     </div>
-                    <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
                       خصم 50% على الشحن
                     </span>
                   </label>
@@ -703,17 +707,20 @@ export default function CheckoutPage() {
                         <span>تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط بدلاً من {formatPrice(baseShippingCost)}!</span>
                       </div>
 
-                      <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-stone-200">
-                        <div>
-                          <span className="text-[#9E8075] block text-[11px]">رقم محفظة فودافون كاش:</span>
-                          <span className="text-sm sm:text-base font-black text-[#8B1A2E]">01099887766</span>
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
+                        <div className="min-w-0">
+                          <span className="text-[#9E8075] block text-[11px] mb-0.5">رقم محفظة فودافون كاش:</span>
+                          <span className="text-sm sm:text-base font-black text-[#8B1A2E] font-mono select-all tracking-wider">01099887766</span>
                         </div>
                         <button
                           type="button"
-                          onClick={() => copyToClipboard("01099887766", "voda")}
-                          className="btn-outline h-9 px-3.5 text-xs flex items-center gap-1.5 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyToClipboard("01099887766", "voda");
+                          }}
+                          className="shrink-0 self-start sm:self-auto inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-full border border-[#8B1A2E] text-[#8B1A2E] bg-white hover:bg-[#8B1A2E] hover:text-white transition-all text-xs font-bold cursor-pointer shadow-xs active:scale-95"
                         >
-                          {copiedVodafone ? <Check size={14} /> : <Copy size={14} />}
+                          {copiedVodafone ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
                           <span>{copiedVodafone ? "تم النسخ" : "نسخ الرقم"}</span>
                         </button>
                       </div>
@@ -742,20 +749,20 @@ export default function CheckoutPage() {
                       : "border-stone-200 bg-stone-50/50 hover:border-stone-300"
                   }`}
                 >
-                  <label className="flex items-center justify-between cursor-pointer">
-                    <div className="flex items-center gap-3">
+                  <label className="flex flex-wrap items-center justify-between gap-2.5 cursor-pointer">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <input
                         type="radio"
                         name="payment"
                         checked={paymentMethod === "instapay"}
                         onChange={() => setPaymentMethod("instapay")}
-                        className="w-4 h-4 accent-[#8B1A2E]"
+                        className="w-4 h-4 accent-[#8B1A2E] shrink-0"
                       />
                       <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
                         الدفع عبر إنستاباي (InstaPay) ⚡
                       </span>
                     </div>
-                    <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
                       خصم 50% على الشحن
                     </span>
                   </label>
@@ -767,24 +774,23 @@ export default function CheckoutPage() {
                         <span>تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط بدلاً من {formatPrice(baseShippingCost)}!</span>
                       </div>
 
-                      <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-stone-200">
-                        <div>
-                          <span className="text-[#9E8075] block text-[11px]">عنوان الدفع (IPA):</span>
-                          <span className="text-sm sm:text-base font-black text-[#8B1A2E]">zahrastore@instapay</span>
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
+                        <div className="min-w-0">
+                          <span className="text-[#9E8075] block text-[11px] mb-0.5">عنوان الدفع (IPA):</span>
+                          <span className="text-sm sm:text-base font-black text-[#8B1A2E] font-mono select-all break-all">zahrastore@instapay</span>
                         </div>
                         <button
                           type="button"
-                          onClick={() => copyToClipboard("zahrastore@instapay", "insta")}
-                          className="btn-outline h-9 px-3.5 text-xs flex items-center gap-1.5 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyToClipboard("zahrastore@instapay", "insta");
+                          }}
+                          className="shrink-0 self-start sm:self-auto inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-full border border-[#8B1A2E] text-[#8B1A2E] bg-white hover:bg-[#8B1A2E] hover:text-white transition-all text-xs font-bold cursor-pointer shadow-xs active:scale-95"
                         >
-                          {copiedInsta ? <Check size={14} /> : <Copy size={14} />}
+                          {copiedInsta ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
                           <span>{copiedInsta ? "تم النسخ" : "نسخ العنوان"}</span>
                         </button>
                       </div>
-
-                      <p className="text-emerald-700 font-bold leading-relaxed">
-                        تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط!
-                      </p>
 
                       <input
                         type="text"
