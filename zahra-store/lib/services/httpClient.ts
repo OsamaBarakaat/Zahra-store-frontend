@@ -10,7 +10,8 @@ export class HttpClient {
   private defaultStoreKey: string;
 
   constructor(baseUrl?: string, defaultStoreKey?: string) {
-    this.baseUrl = baseUrl || process.env.NEXT_PUBLIC_API_URL || '';
+    const rawUrl = baseUrl || process.env.NEXT_PUBLIC_API_URL || 'https://zahra-store-data.vercel.app/api';
+    this.baseUrl = rawUrl.replace(/\/+$/, '');
     this.defaultStoreKey = defaultStoreKey || process.env.NEXT_PUBLIC_STORE_KEY || 'zahra-storefront-key-2026';
   }
 
