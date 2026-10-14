@@ -38,11 +38,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { CategoryService, ProductService } from "@/lib/services/api";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [categories, featured] = await Promise.all([
+    CategoryService.getAll(),
+    ProductService.getFeatured(),
+  ]);
+
   return (
     <html lang="ar" dir="rtl">
       <head>
@@ -60,7 +70,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#8B1A2E" />
       </head>
       <body>
-        <Header />
+        <Header initialCategories={categories} initialFeatured={featured} />
         <main className="pt-header min-h-screen">{children}</main>
         <Footer />
         <CartDrawer />

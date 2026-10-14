@@ -18,24 +18,42 @@ import { useCartStore } from "@/lib/stores/cartStore";
 import { useSearchStore } from "@/lib/stores/searchStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { CategoryService, ProductService } from "@/lib/services/api";
-import { categories as initialCategories } from "@/lib/data/categories";
-import { products as initialProducts } from "@/lib/data/products";
+import { categories as fallbackCategories } from "@/lib/data/categories";
+import { products as fallbackProducts } from "@/lib/data/products";
 import { Category, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils/format";
 import MobileDrawer from "./MobileDrawer";
 
-export default function Header() {
+interface HeaderProps {
+  initialCategories?: Category[];
+  initialFeatured?: Product[];
+}
+
+export default function Header({ initialCategories, initialFeatured }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [productsMenuOpen, setProductsMenuOpen] = useState(false);
-  const [categoriesList, setCategoriesList] = useState<Category[]>(initialCategories);
-  const [menuFeatured, setMenuFeatured] = useState<Product[]>(initialProducts.slice(0, 3));
+  const [categoriesList, setCategoriesList] = useState<Category[]>(
+    initialCategories && initialCategories.length > 0 ? initialCategories : fallbackCategories
+  );
+  const [menuFeatured, setMenuFeatured] = useState<Product[]>(
+    initialFeatured && initialFeatured.length > 0 ? initialFeatured.slice(0, 3) : fallbackProducts.slice(0, 3)
+  );
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const itemCount = useCartStore((s) => s.getItemCount());
   const openCart = useCartStore((s) => s.openCart);
   const openSearch = useSearchStore((s) => s.openSearch);
   const wishlistCount = useWishlistStore((s) => s.items.length);
+
+  useEffect(() => {
+    if (initialCategories && initialCategories.length > 0) {
+      setCategoriesList(initialCategories);
+    }
+    if (initialFeatured && initialFeatured.length > 0) {
+      setMenuFeatured(initialFeatured.slice(0, 3));
+    }
+  }, [initialCategories, initialFeatured]);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -153,12 +171,12 @@ export default function Header() {
                             key={cat.id}
                             href={`/categories/${cat.slug}`}
                             onClick={() => setProductsMenuOpen(false)}
-                            className="group flex items-center justify-between p-3 rounded-2xl hover:bg-[#FDF8F5] border border-transparent hover:border-[#EDE0D4] transition-all duration-200"
+                            className="group flex items-center justify-between p-3 rounded-2xl hover:bg-[#FDF8F5] border border-transparent hover:border-[#EDE0D4] transition-all duration-200 cursor-pointer"
                           >
                             <div className="flex items-center gap-3">
                               <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200 group-hover:scale-105 transition-transform">
                                 <Image
-                                  src={cat.image}
+                                  src={cat.image || "/logo/zahra-logo.png"}
                                   alt={cat.name}
                                   fill
                                   sizes="40px"
@@ -192,32 +210,35 @@ export default function Header() {
                         </h3>
                       </div>
                       <div className="flex flex-col gap-3">
-                        {menuFeatured.map((p) => (
-                          <Link
-                            key={p.id}
-                            href={`/products/${p.slug}`}
-                            onClick={() => setProductsMenuOpen(false)}
-                            className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#FDF8F5] transition-all"
-                          >
-                            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200 group-hover:scale-105 transition-transform">
-                              <Image
-                                src={p.images[0]?.url || "/logo/zahra-logo.png"}
-                                alt={p.name}
-                                fill
-                                sizes="48px"
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-[#1A0C08] group-hover:text-[#8B1A2E] truncate">
-                                {p.name}
-                              </p>
-                              <p className="text-xs font-black text-[#8B1A2E] mt-1 tabular-nums">
-                                {formatPrice(p.price)}
-                              </p>
-                            </div>
-                          </Link>
-                        ))}
+                        {menuFeatured.map((p) => {
+                          const primaryImg = p.images?.find((img) => img.is_primary)?.url || p.images?.[0]?.url || "/logo/zahra-logo.png";
+                          return (
+                            <Link
+                              key={p.id}
+                              href={`/products/${p.slug}`}
+                              onClick={() => setProductsMenuOpen(false)}
+                              className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#FDF8F5] transition-all cursor-pointer"
+                            >
+                              <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200 group-hover:scale-105 transition-transform">
+                                <Image
+                                  src={primaryImg}
+                                  alt={p.name}
+                                  fill
+                                  sizes="48px"
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-[#1A0C08] group-hover:text-[#8B1A2E] truncate">
+                                  {p.name}
+                                </p>
+                                <p className="text-xs font-black text-[#8B1A2E] mt-1 tabular-nums">
+                                  {formatPrice(p.price)}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -235,7 +256,7 @@ export default function Header() {
                         <Link
                           href="/offers"
                           onClick={() => setProductsMenuOpen(false)}
-                          className="w-full h-9 rounded-full bg-white text-[#8B1A2E] text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#FDF8F5] transition-all"
+                          className="w-full h-9 rounded-full bg-white text-[#8B1A2E] text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#FDF8F5] transition-all cursor-pointer"
                         >
                           <span>عرض الخصومات</span>
                           <ArrowLeft size={13} />
@@ -246,7 +267,7 @@ export default function Header() {
                       <Link
                         href="/products"
                         onClick={() => setProductsMenuOpen(false)}
-                        className="mt-5 flex items-center justify-center gap-2 p-3.5 rounded-2xl bg-[#FDF8F5] border border-[#EDE0D4] text-xs font-bold text-[#8B1A2E] hover:bg-[#8B1A2E] hover:text-white transition-all duration-200"
+                        className="mt-5 flex items-center justify-center gap-2 p-3.5 rounded-2xl bg-[#FDF8F5] border border-[#EDE0D4] text-xs font-bold text-[#8B1A2E] hover:bg-[#8B1A2E] hover:text-white transition-all duration-200 cursor-pointer"
                       >
                         <span>تصفحي جميع المنتجات</span>
                         <ArrowLeft size={14} />
@@ -288,7 +309,7 @@ export default function Header() {
             <Link
               href="/account/wishlist"
               aria-label="المفضلة"
-              className="relative w-11 h-11 rounded-full hidden sm:flex items-center justify-center text-[#5C4A42] hover:text-[#8B1A2E] hover:bg-white/90 border border-transparent hover:border-[#EDE0D4] transition-all duration-200"
+              className="relative w-11 h-11 rounded-full hidden sm:flex items-center justify-center text-[#5C4A42] hover:text-[#8B1A2E] hover:bg-white/90 border border-transparent hover:border-[#EDE0D4] transition-all duration-200 cursor-pointer"
             >
               <Heart size={20} />
               {wishlistCount > 0 && (
@@ -317,7 +338,7 @@ export default function Header() {
             <Link
               href="/account"
               aria-label="حسابي"
-              className="w-11 h-11 rounded-full hidden md:flex items-center justify-center text-[#5C4A42] hover:text-[#8B1A2E] hover:bg-white/90 border border-transparent hover:border-[#EDE0D4] transition-all duration-200"
+              className="w-11 h-11 rounded-full hidden md:flex items-center justify-center text-[#5C4A42] hover:text-[#8B1A2E] hover:bg-white/90 border border-transparent hover:border-[#EDE0D4] transition-all duration-200 cursor-pointer"
             >
               <User size={20} />
             </Link>
@@ -326,7 +347,7 @@ export default function Header() {
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="فتح القائمة"
-              className="w-11 h-11 rounded-full md:hidden flex items-center justify-center text-[#1A0C08] bg-white border border-[#EDE0D4] shadow-xs active:scale-95"
+              className="w-11 h-11 rounded-full md:hidden flex items-center justify-center text-[#1A0C08] bg-white border border-[#EDE0D4] shadow-xs active:scale-95 cursor-pointer"
             >
               <Menu size={22} />
             </button>
@@ -335,7 +356,7 @@ export default function Header() {
       </header>
 
       {/* Slide-in Mobile Drawer */}
-      <MobileDrawer isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileDrawer isOpen={mobileOpen} onClose={() => setMobileOpen(false)} categories={categoriesList} />
     </>
   );
 }

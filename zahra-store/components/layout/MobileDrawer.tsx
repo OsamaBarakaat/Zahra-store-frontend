@@ -22,11 +22,20 @@ import { Category } from "@/lib/types";
 interface MobileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  categories?: Category[];
 }
 
-export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
+export default function MobileDrawer({ isOpen, onClose, categories }: MobileDrawerProps) {
   const [productsOpen, setProductsOpen] = useState(true);
-  const [categoriesList, setCategoriesList] = useState<Category[]>(initialCategories);
+  const [categoriesList, setCategoriesList] = useState<Category[]>(
+    categories && categories.length > 0 ? categories : initialCategories
+  );
+
+  useEffect(() => {
+    if (categories && categories.length > 0) {
+      setCategoriesList(categories);
+    }
+  }, [categories]);
 
   useEffect(() => {
     if (isOpen) {
@@ -78,7 +87,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           <button
             onClick={onClose}
             aria-label="إغلاق القائمة"
-            className="w-10 h-10 rounded-full bg-white border border-[#EDE0D4] flex items-center justify-center text-[#8B1A2E] hover:bg-[#F2D4CC] transition-colors"
+            className="w-10 h-10 rounded-full bg-white border border-[#EDE0D4] flex items-center justify-center text-[#8B1A2E] hover:bg-[#F2D4CC] transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -90,7 +99,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           <Link
             href="/"
             onClick={onClose}
-            className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-stone-800 font-bold hover:bg-[#FDF8F5] hover:text-[#8B1A2E] transition-colors"
+            className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-stone-800 font-bold hover:bg-[#FDF8F5] hover:text-[#8B1A2E] transition-colors cursor-pointer"
           >
             <Home size={20} className="text-[#8B1A2E]" />
             <span>الرئيسية</span>
@@ -100,7 +109,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           <div className="rounded-2xl border border-[#EDE0D4] bg-[#FDF8F5] overflow-hidden my-2">
             <button
               onClick={() => setProductsOpen(!productsOpen)}
-              className="w-full flex items-center justify-between p-4 text-[#8B1A2E] font-extrabold text-sm"
+              className="w-full flex items-center justify-between p-4 text-[#8B1A2E] font-extrabold text-sm cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <ShoppingBag size={20} />

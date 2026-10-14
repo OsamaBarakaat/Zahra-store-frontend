@@ -223,7 +223,7 @@ export default function ProductDetailClient({
               <button
                 onClick={handleToggleWishlist}
                 aria-label="إضافة للمفضلة"
-                className="w-11 h-11 rounded-full border border-[#EDE0D4] bg-white flex items-center justify-center text-stone-600 hover:text-[#8B1A2E] active:scale-95 transition-all shadow-xs"
+                className="w-11 h-11 rounded-full border border-[#EDE0D4] bg-white flex items-center justify-center text-stone-600 hover:text-[#8B1A2E] active:scale-95 transition-all shadow-xs cursor-pointer"
               >
                 <Heart size={20} className={isLiked ? "fill-[#8B1A2E] text-[#8B1A2E]" : ""} />
               </button>
@@ -543,14 +543,14 @@ export default function ProductDetailClient({
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="btn-outline h-9 px-3 text-xs font-bold"
+                          className="btn-outline h-9 px-3 text-xs font-bold cursor-pointer"
                         >
                           تغيير الصورة
                         </button>
                         <button
                           type="button"
                           onClick={() => setCustomChairImage(null)}
-                          className="w-9 h-9 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center text-xs font-bold"
+                          className="w-9 h-9 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center text-xs font-bold cursor-pointer"
                           title="حذف الصورة"
                         >
                           ✕
@@ -600,7 +600,7 @@ export default function ProductDetailClient({
                         key={c.id}
                         type="button"
                         onClick={() => setSelectedColor(c.name)}
-                        className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
+                        className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer ${
                           selectedColor === c.name
                             ? "border-[#8B1A2E] bg-white text-[#8B1A2E] shadow-xs"
                             : "border-[#EDE0D4] bg-stone-50 text-stone-700 hover:border-stone-400"
@@ -629,7 +629,7 @@ export default function ProductDetailClient({
                         key={s.id}
                         type="button"
                         onClick={() => setSelectedSize(s.name)}
-                        className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 transition-all ${
+                        className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 transition-all cursor-pointer ${
                           selectedSize === s.name
                             ? "border-[#8B1A2E] bg-[#8B1A2E] text-white shadow-xs"
                             : "border-[#EDE0D4] bg-white text-stone-700 hover:border-stone-400"
@@ -661,7 +661,7 @@ export default function ProductDetailClient({
               <button
                 type="button"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-700 hover:bg-stone-100 font-black text-lg"
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-700 hover:bg-stone-100 font-black text-lg cursor-pointer"
                 aria-label="تقليل الكمية"
               >
                 -
@@ -672,7 +672,7 @@ export default function ProductDetailClient({
               <button
                 type="button"
                 onClick={() => setQuantity((q) => q + 1)}
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-700 hover:bg-stone-100 font-black text-lg"
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-700 hover:bg-stone-100 font-black text-lg cursor-pointer"
                 aria-label="زيادة الكمية"
               >
                 +
@@ -691,7 +691,7 @@ export default function ProductDetailClient({
             <button
               onClick={() => handleAddToCart(true)}
               disabled={!product.inStock || isAdding}
-              className="btn-primary flex-1 h-13 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:opacity-50"
+              className="btn-primary flex-1 h-13 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
               style={{ minHeight: 50 }}
             >
               {isAdding ? (
@@ -707,7 +707,7 @@ export default function ProductDetailClient({
             <button
               onClick={handleBuyNow}
               disabled={!product.inStock}
-              className="h-13 px-7 rounded-full bg-[#1A0C08] text-white hover:bg-[#382018] font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+              className="h-13 px-7 rounded-full bg-[#1A0C08] text-white hover:bg-[#382018] font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               style={{ minHeight: 50 }}
             >
               <Zap size={18} className="text-[#E8A4A0]" />

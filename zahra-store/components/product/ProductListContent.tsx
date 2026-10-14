@@ -205,7 +205,7 @@ export default function ProductListContent({
               {selectedCategory !== "all" && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#F2D4CC] text-[#8B1A2E] text-xs font-bold">
                   {categories.find((c) => c.slug === selectedCategory)?.name}
-                  <button onClick={() => setSelectedCategory("all")}>
+                  <button onClick={() => setSelectedCategory("all")} className="cursor-pointer hover:opacity-70 transition-opacity">
                     <X size={13} />
                   </button>
                 </span>
@@ -213,7 +213,7 @@ export default function ProductListContent({
               {onlySale && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold">
                   تخفيضات فقط
-                  <button onClick={() => setOnlySale(false)}>
+                  <button onClick={() => setOnlySale(false)} className="cursor-pointer hover:opacity-70 transition-opacity">
                     <X size={13} />
                   </button>
                 </span>
@@ -221,7 +221,7 @@ export default function ProductListContent({
               {onlyInStock && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-stone-200 text-stone-700 text-xs font-bold">
                   متوفر فقط
-                  <button onClick={() => setOnlyInStock(false)}>
+                  <button onClick={() => setOnlyInStock(false)} className="cursor-pointer hover:opacity-70 transition-opacity">
                     <X size={13} />
                   </button>
                 </span>
@@ -246,7 +246,7 @@ export default function ProductListContent({
               <h3 className="text-base font-bold text-[#1A0C08]">تصفية المنتجات</h3>
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="w-9 h-9 rounded-full bg-[#FDF8F5] flex items-center justify-center text-[#8B1A2E]"
+                className="w-9 h-9 rounded-full bg-[#FDF8F5] flex items-center justify-center text-[#8B1A2E] cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -258,7 +258,7 @@ export default function ProductListContent({
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setSelectedCategory("all")}
-                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                     selectedCategory === "all"
                       ? "border-[#8B1A2E] bg-[#FDF8F5] text-[#8B1A2E]"
                       : "border-stone-200 text-stone-700"
@@ -270,7 +270,7 @@ export default function ProductListContent({
                   <button
                     key={c.id}
                     onClick={() => setSelectedCategory(c.slug)}
-                    className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
+                    className={`p-2.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                       selectedCategory === c.slug
                         ? "border-[#8B1A2E] bg-[#FDF8F5] text-[#8B1A2E]"
                         : "border-stone-200 text-stone-700"
@@ -284,23 +284,23 @@ export default function ProductListContent({
 
             {/* Toggles */}
             <div className="space-y-3 mb-6 pt-2 border-t border-[#EDE0D4]">
-              <label className="flex items-center justify-between p-3 rounded-xl bg-stone-50 text-xs font-bold text-stone-800">
+              <label className="flex items-center justify-between p-3 rounded-xl bg-stone-50 text-xs font-bold text-stone-800 cursor-pointer">
                 <span>العروض والتخفيضات فقط 🏷️</span>
                 <input
                   type="checkbox"
                   checked={onlySale}
                   onChange={(e) => setOnlySale(e.target.checked)}
-                  className="w-4 h-4 accent-[#8B1A2E]"
+                  className="w-4 h-4 accent-[#8B1A2E] cursor-pointer"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-3 rounded-xl bg-stone-50 text-xs font-bold text-stone-800">
+              <label className="flex items-center justify-between p-3 rounded-xl bg-stone-50 text-xs font-bold text-stone-800 cursor-pointer">
                 <span>المتوفر بالمخزون فقط</span>
                 <input
                   type="checkbox"
                   checked={onlyInStock}
                   onChange={(e) => setOnlyInStock(e.target.checked)}
-                  className="w-4 h-4 accent-[#8B1A2E]"
+                  className="w-4 h-4 accent-[#8B1A2E] cursor-pointer"
                 />
               </label>
             </div>
@@ -308,13 +308,13 @@ export default function ProductListContent({
             <div className="flex gap-3">
               <button
                 onClick={clearAllFilters}
-                className="btn-outline flex-1 h-12 text-xs font-bold"
+                className="btn-outline flex-1 h-12 text-xs font-bold cursor-pointer"
               >
                 مسح الفلاتر
               </button>
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="btn-primary flex-1 h-12 text-xs font-bold"
+                className="btn-primary flex-1 h-12 text-xs font-bold cursor-pointer"
               >
                 تطبيق ({filteredProducts.length})
               </button>

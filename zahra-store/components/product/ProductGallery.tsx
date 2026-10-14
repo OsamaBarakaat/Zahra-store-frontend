@@ -49,7 +49,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               type="button"
               onClick={() => setSelectedIndex(idx)}
               aria-label={`عرض الصورة ${idx + 1}`}
-              className={`relative w-18 h-18 sm:w-20 sm:h-20 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all duration-200 ${
+              className={`relative w-18 h-18 sm:w-20 sm:h-20 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all duration-200 cursor-pointer ${
                 selectedIndex === idx
                   ? "border-[#8B1A2E] shadow-sm scale-102"
                   : "border-transparent opacity-70 hover:opacity-100"

@@ -96,6 +96,26 @@
   a {
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* ─── Global Cursor Pointer for All Interactive Elements ─── */
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled,
+  select:disabled {
+    cursor: not-allowed;
   }
 
   :focus-visible {

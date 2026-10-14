@@ -107,7 +107,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         <button
           onClick={handleToggleWishlist}
           aria-label={isLiked ? "إزالة من المفضلة" : "إضافة للمفضلة"}
-          className="absolute top-3 left-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md shadow-xs flex items-center justify-center transition-all duration-200 hover:bg-white hover:scale-105 active:scale-90 z-10 border border-black/[0.04]"
+          className="absolute top-3 left-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md shadow-xs flex items-center justify-center transition-all duration-200 hover:bg-white hover:scale-105 active:scale-90 z-10 border border-black/[0.04] cursor-pointer"
         >
           <Heart
             size={18}
