@@ -1,153 +1,75 @@
-import { Product, Category, Order, CustomerInfo, ShippingAddress, PaymentMethod } from "@/lib/types";
+import { Product, Category, Order, CustomerInfo, ShippingAddress, PaymentMethod, User } from "@/lib/types";
 import { products, getProductBySlug, getFeaturedProducts, getSaleProducts, getProductsByCategory, searchProducts } from "@/lib/data/products";
 import { categories, getCategoryBySlug } from "@/lib/data/categories";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
-const STORE_KEY = process.env.NEXT_PUBLIC_STORE_KEY || "zahra-storefront-key-2026";
+import { httpClient } from "./httpClient";
 
 /**
- * Standard Headers for Zahra Store APIs
+ * Re-export HttpClient & Cookie Storage for clean access
  */
-function getHeaders(extraHeaders: Record<string, string> = {}) {
-  const headers: Record<string, string> = {
-    "Accept": "application/json",
-    ...extraHeaders,
-  };
-  if (STORE_KEY) {
-    headers["x-api-key"] = STORE_KEY;
-    headers["Authorization"] = `Bearer ${STORE_KEY}`;
-  }
-  return headers;
-}
+export { httpClient } from "./httpClient";
+export { CookieStorage } from "@/lib/utils/cookies";
 
 /**
- * Service Layer for Zahra Store
- * Connects directly to backend API on Vercel with graceful fallback to mock data
+ * ── 1. PRODUCT SERVICE (Single Responsibility: Products Data) ──
  */
-
 export const ProductService = {
   async getAll(): Promise<Product[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/products`, {
-          headers: getHeaders(),
-          next: { revalidate: 60 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Product[]>("/products", undefined, { next: { revalidate: 60 } });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return products;
   },
 
   async getBySlug(slug: string): Promise<Product | null> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/products/${slug}`, {
-          headers: getHeaders(),
-          next: { revalidate: 60 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Product>(`/products/${slug}`, undefined, { next: { revalidate: 60 } });
+    if (data) return data;
     return getProductBySlug(slug) || null;
   },
 
   async getFeatured(): Promise<Product[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/products/featured`, {
-          headers: getHeaders(),
-          next: { revalidate: 60 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Product[]>("/products/featured", undefined, { next: { revalidate: 60 } });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return getFeaturedProducts();
   },
 
   async getSale(): Promise<Product[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/products/sale`, {
-          headers: getHeaders(),
-          next: { revalidate: 60 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Product[]>("/products/sale", undefined, { next: { revalidate: 60 } });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return getSaleProducts();
   },
 
   async getByCategory(categorySlug: string): Promise<Product[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/categories/${categorySlug}/products`, {
-          headers: getHeaders(),
-          next: { revalidate: 60 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Product[]>(`/categories/${categorySlug}/products`, undefined, { next: { revalidate: 60 } });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return getProductsByCategory(categorySlug);
   },
 
   async search(query: string): Promise<Product[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`, {
-          headers: getHeaders(),
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Product[]>("/search", { q: query });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return searchProducts(query);
   },
 };
 
+/**
+ * ── 2. CATEGORY SERVICE (Single Responsibility: Categories Data) ──
+ */
 export const CategoryService = {
   async getAll(): Promise<Category[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/categories`, {
-          headers: getHeaders(),
-          next: { revalidate: 3600 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Category[]>("/categories", undefined, { next: { revalidate: 3600 } });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return categories;
   },
 
   async getBySlug(slug: string): Promise<Category | null> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/categories/${slug}`, {
-          headers: getHeaders(),
-          next: { revalidate: 3600 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API unavailable, using mock data:", e);
-      }
-    }
+    const data = await httpClient.get<Category>(`/categories/${slug}`, undefined, { next: { revalidate: 3600 } });
+    if (data) return data;
     return getCategoryBySlug(slug) || null;
   },
 };
 
+/**
+ * ── 3. SHIPPING SERVICE (Live Rates from Supabase) ──
+ */
 export interface ShippingZone {
   id: string;
   governorate_name_ar: string;
@@ -159,72 +81,45 @@ export interface ShippingZone {
 
 export const ShippingService = {
   async getZones(): Promise<ShippingZone[]> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/shipping/zones`, {
-          headers: getHeaders(),
-          next: { revalidate: 3600 },
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Shipping zones fetch error:", e);
-      }
-    }
+    const data = await httpClient.get<ShippingZone[]>("/shipping/zones", undefined, { next: { revalidate: 3600 } });
+    if (data && Array.isArray(data) && data.length > 0) return data;
     return [];
   },
 };
 
+/**
+ * ── 4. CHAIR CUSTOM SERVICE (Uploads & Tailoring Requests) ──
+ */
 export const ChairCustomService = {
   async uploadPhoto(file: File): Promise<string | null> {
-    if (!API_BASE_URL) return null;
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch(`${API_BASE_URL}/chair-custom/upload`, {
-        method: "POST",
-        headers: {
-          "x-api-key": STORE_KEY,
-        },
-        body: formData,
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.url;
-      }
-    } catch (e) {
-      console.warn("Chair photo upload failed:", e);
-    }
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const data = await httpClient.post<{ url: string }>("/chair-custom/upload", formData);
+    if (data?.url) return data.url;
     return null;
   },
 };
 
+/**
+ * ── 5. ORDER SERVICE (Order Creation, Tracking, History) ──
+ */
 export const OrderService = {
   async createOrder(orderData: Omit<Order, "id" | "orderNumber" | "createdAt" | "status">): Promise<Order> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/orders`, {
-          method: "POST",
-          headers: getHeaders({ "Content-Type": "application/json" }),
-          body: JSON.stringify(orderData),
-        });
-        if (res.ok) {
-          const createdOrder = await res.json();
-          // Save locally in customer's browser storage
-          if (typeof window !== "undefined") {
-            try {
-              const saved = JSON.parse(localStorage.getItem("zahra_orders") || "[]");
-              localStorage.setItem("zahra_orders", JSON.stringify([createdOrder, ...saved]));
-            } catch (_) {}
-          }
-          return createdOrder;
-        }
-      } catch (e) {
-        console.warn("Backend API unavailable, saving order locally:", e);
+    const createdOrder = await httpClient.post<Order>("/orders", orderData);
+
+    if (createdOrder) {
+      if (typeof window !== "undefined") {
+        try {
+          const saved = JSON.parse(localStorage.getItem("zahra_orders") || "[]");
+          localStorage.setItem("zahra_orders", JSON.stringify([createdOrder, ...saved]));
+        } catch (_) {}
       }
+      return createdOrder;
     }
 
-    // Mock local creation
-    const newOrder: Order = {
+    // Local fallback creation
+    const fallbackOrder: Order = {
       ...orderData,
       id: `ord_${Date.now()}`,
       orderNumber: `ZHR-${Date.now().toString().slice(-6)}`,
@@ -236,24 +131,16 @@ export const OrderService = {
     if (typeof window !== "undefined") {
       try {
         const saved = JSON.parse(localStorage.getItem("zahra_orders") || "[]");
-        localStorage.setItem("zahra_orders", JSON.stringify([newOrder, ...saved]));
+        localStorage.setItem("zahra_orders", JSON.stringify([fallbackOrder, ...saved]));
       } catch (_) {}
     }
 
-    return newOrder;
+    return fallbackOrder;
   },
 
   async getOrderById(id: string): Promise<Order | null> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
-          headers: getHeaders(),
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Backend API error:", e);
-      }
-    }
+    const remote = await httpClient.get<Order>(`/orders/${id}`);
+    if (remote) return remote;
 
     if (typeof window !== "undefined") {
       try {
@@ -262,21 +149,12 @@ export const OrderService = {
         if (found) return found;
       } catch (_) {}
     }
-
     return null;
   },
 
   async trackOrder(query: string): Promise<Order[] | null> {
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/orders/track?q=${encodeURIComponent(query)}`, {
-          headers: getHeaders(),
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn("Track order error:", e);
-      }
-    }
+    const data = await httpClient.get<Order[]>("/orders/track", { q: query });
+    if (data && Array.isArray(data)) return data;
     return null;
   },
 
@@ -289,5 +167,26 @@ export const OrderService = {
       }
     }
     return [];
+  },
+};
+
+/**
+ * ── 6. AUTH SERVICE (Cookie-based Session Management) ──
+ */
+export const AuthService = {
+  async login(email: string, password: string): Promise<{ accessToken: string; user: any } | null> {
+    const res = await httpClient.post<{ accessToken: string; user: any }>("/auth/login", { email, password });
+    if (res?.accessToken) {
+      httpClient.setAuthToken(res.accessToken);
+    }
+    return res;
+  },
+
+  async me(): Promise<any | null> {
+    return httpClient.get<any>("/auth/me");
+  },
+
+  logout(): void {
+    httpClient.clearAuthToken();
   },
 };

@@ -15,7 +15,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { InstagramIcon, FacebookIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
-import { categories } from "@/lib/data/categories";
+import { CategoryService } from "@/lib/services/api";
+import { categories as initialCategories } from "@/lib/data/categories";
+import { Category } from "@/lib/types";
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -24,6 +26,15 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const [productsOpen, setProductsOpen] = useState(true);
+  const [categoriesList, setCategoriesList] = useState<Category[]>(initialCategories);
+
+  useEffect(() => {
+    if (isOpen) {
+      CategoryService.getAll().then((cats) => {
+        if (cats && cats.length > 0) setCategoriesList(cats);
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -111,7 +122,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                   ✨ تصفحي جميع المنتجات
                 </Link>
 
-                {categories.map((cat) => (
+                {categoriesList.map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/categories/${cat.slug}`}

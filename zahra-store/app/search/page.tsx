@@ -3,8 +3,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Search, X, Sparkles, ArrowLeft } from "lucide-react";
-import { searchProducts } from "@/lib/data/products";
-import { categories } from "@/lib/data/categories";
+import { ProductService, CategoryService } from "@/lib/services/api";
 import { Product, Category } from "@/lib/types";
 import ProductGrid from "@/components/product/ProductGrid";
 
@@ -16,17 +15,24 @@ function SearchPageContent() {
   const [query, setQuery] = useState(initialQ);
   const [results, setResults] = useState<Product[]>([]);
   const [matchedCategories, setMatchedCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (initialQ) {
       setQuery(initialQ);
-      const matched = searchProducts(initialQ);
-      const qLower = initialQ.toLowerCase().trim();
-      const catMatches = categories.filter(
-        (c) => c.name.includes(qLower) || c.description?.includes(qLower)
-      );
-      setResults(matched);
-      setMatchedCategories(catMatches);
+      setIsLoading(true);
+      Promise.all([
+        ProductService.search(initialQ),
+        CategoryService.getAll(),
+      ]).then(([matched, allCats]) => {
+        const qLower = initialQ.toLowerCase().trim();
+        const catMatches = allCats.filter(
+          (c) => c.name.toLowerCase().includes(qLower) || c.description?.toLowerCase().includes(qLower)
+        );
+        setResults(matched);
+        setMatchedCategories(catMatches);
+        setIsLoading(false);
+      });
     } else {
       setResults([]);
       setMatchedCategories([]);

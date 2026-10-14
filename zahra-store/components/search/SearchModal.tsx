@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, X, ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { useSearchStore } from "@/lib/stores/searchStore";
-import { searchProducts } from "@/lib/data/products";
-import { categories } from "@/lib/data/categories";
+import { ProductService, CategoryService } from "@/lib/services/api";
+import { Category } from "@/lib/types";
 import { formatPrice } from "@/lib/utils/format";
 
 export default function SearchModal() {
@@ -37,18 +37,37 @@ export default function SearchModal() {
     };
   }, [isOpen]);
 
+  const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [cachedCategories, setCachedCategories] = React.useState<Category[]>([]);
+
+  useEffect(() => {
+    if (isOpen && cachedCategories.length === 0) {
+      CategoryService.getAll().then((cats) => setCachedCategories(cats));
+    }
+  }, [isOpen, cachedCategories.length]);
+
   const handleSearchChange = (val: string) => {
     setQuery(val);
     if (!val.trim()) {
       setResults([], []);
       return;
     }
-    const matchedProducts = searchProducts(val);
-    const qLower = val.toLowerCase().trim();
-    const matchedCategories = categories.filter(
-      (c) => c.name.includes(qLower) || c.description?.includes(qLower)
-    );
-    setResults(matchedProducts, matchedCategories);
+
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+
+    searchDebounceRef.current = setTimeout(async () => {
+      const qLower = val.toLowerCase().trim();
+      const [matchedProducts, allCats] = await Promise.all([
+        ProductService.search(val),
+        cachedCategories.length > 0 ? Promise.resolve(cachedCategories) : CategoryService.getAll(),
+      ]);
+
+      const matchedCategories = allCats.filter(
+        (c) => c.name.toLowerCase().includes(qLower) || c.description?.toLowerCase().includes(qLower)
+      );
+
+      setResults(matchedProducts, matchedCategories);
+    }, 250);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -17,8 +17,10 @@ import {
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useSearchStore } from "@/lib/stores/searchStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
-import { categories } from "@/lib/data/categories";
-import { products } from "@/lib/data/products";
+import { CategoryService, ProductService } from "@/lib/services/api";
+import { categories as initialCategories } from "@/lib/data/categories";
+import { products as initialProducts } from "@/lib/data/products";
+import { Category, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils/format";
 import MobileDrawer from "./MobileDrawer";
 
@@ -26,6 +28,8 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [productsMenuOpen, setProductsMenuOpen] = useState(false);
+  const [categoriesList, setCategoriesList] = useState<Category[]>(initialCategories);
+  const [menuFeatured, setMenuFeatured] = useState<Product[]>(initialProducts.slice(0, 3));
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const itemCount = useCartStore((s) => s.getItemCount());
@@ -36,6 +40,15 @@ export default function Header() {
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
     window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Fetch live categories and featured items for header mega-menu
+    CategoryService.getAll().then((cats) => {
+      if (cats && cats.length > 0) setCategoriesList(cats);
+    });
+    ProductService.getFeatured().then((prods) => {
+      if (prods && prods.length > 0) setMenuFeatured(prods.slice(0, 3));
+    });
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -51,9 +64,6 @@ export default function Header() {
       setProductsMenuOpen(false);
     }, 350);
   };
-
-  // 3 featured items for the mega menu
-  const menuFeatured = products.slice(0, 3);
 
   return (
     <>
@@ -138,7 +148,7 @@ export default function Header() {
                         </h3>
                       </div>
                       <div className="grid grid-cols-1 gap-2">
-                        {categories.map((cat) => (
+                        {categoriesList.map((cat) => (
                           <Link
                             key={cat.id}
                             href={`/categories/${cat.slug}`}
