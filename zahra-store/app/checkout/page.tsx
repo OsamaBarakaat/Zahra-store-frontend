@@ -8,7 +8,7 @@ import { useToastStore } from "@/lib/stores/toastStore";
 import { formatPrice } from "@/lib/utils/format";
 import { isValidEgyptianPhone, validateCheckoutForm } from "@/lib/utils/validation";
 import { EGYPTIAN_GOVERNORATES, PaymentMethod } from "@/lib/types";
-import { OrderService } from "@/lib/services/api";
+import { OrderService, ShippingService, ShippingZone } from "@/lib/services/api";
 import {
   ChevronDown,
   ChevronUp,
@@ -63,10 +63,23 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedInsta, setCopiedInsta] = useState(false);
   const [copiedVodafone, setCopiedVodafone] = useState(false);
+  const [shippingZones, setShippingZones] = useState<ShippingZone[]>([]);
 
-  // Dynamic Shipping Calculation by Egyptian Governorate
+  // Fetch real shipping rates from Supabase
+  React.useEffect(() => {
+    ShippingService.getZones().then((zones) => {
+      if (zones && zones.length > 0) {
+        setShippingZones(zones);
+      }
+    });
+  }, []);
+
+  // Dynamic Shipping Calculation by Egyptian Governorate (Live API + Fallback)
   const baseShippingCost = useMemo(() => {
     const gov = formData.governorate;
+    const match = shippingZones.find((z) => z.governorate_name_ar === gov && z.is_active);
+    if (match) return match.shipping_fee;
+
     if (gov === "القاهرة" || gov === "الجيزة") return 65;
     if (["الإسكندرية", "القليوبية", "الغربية", "المنوفية", "الدقهلية", "الشرقية", "كفر الشيخ", "البحيرة", "دمياط"].includes(gov)) {
       return 75;
@@ -76,7 +89,7 @@ export default function CheckoutPage() {
     }
     // Frontier governorates
     return 110;
-  }, [formData.governorate]);
+  }, [formData.governorate, shippingZones]);
 
   // Apply 50% discount on shipping if InstaPay is selected (as seen in the reference image)
   const shippingCost = useMemo(() => {

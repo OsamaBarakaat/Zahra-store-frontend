@@ -3,19 +3,36 @@ import { products, getProductBySlug, getFeaturedProducts, getSaleProducts, getPr
 import { categories, getCategoryBySlug } from "@/lib/data/categories";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const STORE_KEY = process.env.NEXT_PUBLIC_STORE_KEY || "zahra-storefront-key-2026";
+
+/**
+ * Standard Headers for Zahra Store APIs
+ */
+function getHeaders(extraHeaders: Record<string, string> = {}) {
+  const headers: Record<string, string> = {
+    "Accept": "application/json",
+    ...extraHeaders,
+  };
+  if (STORE_KEY) {
+    headers["x-api-key"] = STORE_KEY;
+    headers["Authorization"] = `Bearer ${STORE_KEY}`;
+  }
+  return headers;
+}
 
 /**
  * Service Layer for Zahra Store
- * Designed for immediate backend API connection:
- * When NEXT_PUBLIC_API_URL is set, methods fetch from real backend.
- * Otherwise, seamlessly fall back to comprehensive local mock data.
+ * Connects directly to backend API on Vercel with graceful fallback to mock data
  */
 
 export const ProductService = {
   async getAll(): Promise<Product[]> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/products`, { next: { revalidate: 60 } });
+        const res = await fetch(`${API_BASE_URL}/products`, {
+          headers: getHeaders(),
+          next: { revalidate: 60 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -27,7 +44,10 @@ export const ProductService = {
   async getBySlug(slug: string): Promise<Product | null> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/products/${slug}`, { next: { revalidate: 60 } });
+        const res = await fetch(`${API_BASE_URL}/products/${slug}`, {
+          headers: getHeaders(),
+          next: { revalidate: 60 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -39,7 +59,10 @@ export const ProductService = {
   async getFeatured(): Promise<Product[]> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/products/featured`, { next: { revalidate: 60 } });
+        const res = await fetch(`${API_BASE_URL}/products/featured`, {
+          headers: getHeaders(),
+          next: { revalidate: 60 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -51,7 +74,10 @@ export const ProductService = {
   async getSale(): Promise<Product[]> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/products/sale`, { next: { revalidate: 60 } });
+        const res = await fetch(`${API_BASE_URL}/products/sale`, {
+          headers: getHeaders(),
+          next: { revalidate: 60 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -63,7 +89,10 @@ export const ProductService = {
   async getByCategory(categorySlug: string): Promise<Product[]> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/categories/${categorySlug}/products`, { next: { revalidate: 60 } });
+        const res = await fetch(`${API_BASE_URL}/categories/${categorySlug}/products`, {
+          headers: getHeaders(),
+          next: { revalidate: 60 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -75,7 +104,9 @@ export const ProductService = {
   async search(query: string): Promise<Product[]> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`, {
+          headers: getHeaders(),
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -89,7 +120,10 @@ export const CategoryService = {
   async getAll(): Promise<Category[]> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/categories`, { next: { revalidate: 3600 } });
+        const res = await fetch(`${API_BASE_URL}/categories`, {
+          headers: getHeaders(),
+          next: { revalidate: 3600 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -101,7 +135,10 @@ export const CategoryService = {
   async getBySlug(slug: string): Promise<Category | null> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/categories/${slug}`, { next: { revalidate: 3600 } });
+        const res = await fetch(`${API_BASE_URL}/categories/${slug}`, {
+          headers: getHeaders(),
+          next: { revalidate: 3600 },
+        });
         if (res.ok) return await res.json();
       } catch (e) {
         console.warn("Backend API unavailable, using mock data:", e);
@@ -111,16 +148,76 @@ export const CategoryService = {
   },
 };
 
+export interface ShippingZone {
+  id: string;
+  governorate_name_ar: string;
+  governorate_name_en?: string;
+  shipping_fee: number;
+  estimated_days: string;
+  is_active: boolean;
+}
+
+export const ShippingService = {
+  async getZones(): Promise<ShippingZone[]> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/shipping/zones`, {
+          headers: getHeaders(),
+          next: { revalidate: 3600 },
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("Shipping zones fetch error:", e);
+      }
+    }
+    return [];
+  },
+};
+
+export const ChairCustomService = {
+  async uploadPhoto(file: File): Promise<string | null> {
+    if (!API_BASE_URL) return null;
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_BASE_URL}/chair-custom/upload`, {
+        method: "POST",
+        headers: {
+          "x-api-key": STORE_KEY,
+        },
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.url;
+      }
+    } catch (e) {
+      console.warn("Chair photo upload failed:", e);
+    }
+    return null;
+  },
+};
+
 export const OrderService = {
   async createOrder(orderData: Omit<Order, "id" | "orderNumber" | "createdAt" | "status">): Promise<Order> {
     if (API_BASE_URL) {
       try {
         const res = await fetch(`${API_BASE_URL}/orders`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify(orderData),
         });
-        if (res.ok) return await res.json();
+        if (res.ok) {
+          const createdOrder = await res.json();
+          // Save locally in customer's browser storage
+          if (typeof window !== "undefined") {
+            try {
+              const saved = JSON.parse(localStorage.getItem("zahra_orders") || "[]");
+              localStorage.setItem("zahra_orders", JSON.stringify([createdOrder, ...saved]));
+            } catch (_) {}
+          }
+          return createdOrder;
+        }
       } catch (e) {
         console.warn("Backend API unavailable, saving order locally:", e);
       }
@@ -132,7 +229,7 @@ export const OrderService = {
       id: `ord_${Date.now()}`,
       orderNumber: `ZHR-${Date.now().toString().slice(-6)}`,
       createdAt: new Date().toISOString(),
-      status: "confirmed",
+      status: "pending",
       estimatedDelivery: "خلال 2-4 أيام عمل",
     };
 
@@ -149,10 +246,12 @@ export const OrderService = {
   async getOrderById(id: string): Promise<Order | null> {
     if (API_BASE_URL) {
       try {
-        const res = await fetch(`${API_BASE_URL}/orders/${id}`);
+        const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
+          headers: getHeaders(),
+        });
         if (res.ok) return await res.json();
       } catch (e) {
-        console.warn("Backend API unavailable, checking local orders:", e);
+        console.warn("Backend API error:", e);
       }
     }
 
@@ -164,6 +263,20 @@ export const OrderService = {
       } catch (_) {}
     }
 
+    return null;
+  },
+
+  async trackOrder(query: string): Promise<Order[] | null> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/orders/track?q=${encodeURIComponent(query)}`, {
+          headers: getHeaders(),
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("Track order error:", e);
+      }
+    }
     return null;
   },
 

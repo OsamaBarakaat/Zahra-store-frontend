@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/utils/format";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { useToastStore } from "@/lib/stores/toastStore";
+import { ChairCustomService } from "@/lib/services/api";
 import ProductGallery from "@/components/product/ProductGallery";
 import StickyAddToCart from "@/components/product/StickyAddToCart";
 import ProductGrid from "@/components/product/ProductGrid";
@@ -79,7 +80,7 @@ export default function ProductDetailClient({
     ? product.originalPrice + priceModifier
     : undefined;
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -88,14 +89,28 @@ export default function ProductDetailClient({
       return;
     }
 
+    // Local instant preview
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result as string;
       setCustomChairImage(result);
       setChairImageError(false);
-      toast.success("تم إرفاق صورة الكرسي بنجاح 📸");
     };
     reader.readAsDataURL(file);
+
+    // Upload to Supabase Storage bucket chair-custom-uploads
+    toast.info("جاري رفع صورة الكرسي إلى الخادم...");
+    try {
+      const remoteUrl = await ChairCustomService.uploadPhoto(file);
+      if (remoteUrl) {
+        setCustomChairImage(remoteUrl);
+        toast.success("تم رفع صورة الكرسي بنجاح 📸");
+      } else {
+        toast.success("تم إرفاق صورة الكرسي محلياً بنجاح 📸");
+      }
+    } catch {
+      toast.success("تم إرفاق صورة الكرسي محلياً بنجاح 📸");
+    }
   };
 
   const handleAddToCart = (openDrawer = true) => {
