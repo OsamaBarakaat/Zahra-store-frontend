@@ -8,7 +8,7 @@ import { useToastStore } from "@/lib/stores/toastStore";
 import { formatPrice } from "@/lib/utils/format";
 import { isValidEgyptianPhone, validateCheckoutForm } from "@/lib/utils/validation";
 import { EGYPTIAN_GOVERNORATES, PaymentMethod } from "@/lib/types";
-import { OrderService, ShippingService, ShippingZone } from "@/lib/services/api";
+import { OrderService, ShippingService, ShippingZone, CouponService, CouponValidationResult } from "@/lib/services/api";
 import {
   ChevronDown,
   ChevronUp,
@@ -23,6 +23,9 @@ import {
   CreditCard,
   Phone,
   HelpCircle,
+  X,
+  Loader2,
+  Percent,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -59,6 +62,8 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [couponDetails, setCouponDetails] = useState<CouponValidationResult | null>(null);
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedInsta, setCopiedInsta] = useState(false);
@@ -91,33 +96,51 @@ export default function CheckoutPage() {
     return 110;
   }, [formData.governorate, shippingZones]);
 
-  // Apply 50% discount on shipping if InstaPay is selected (as seen in the reference image)
-  const shippingCost = useMemo(() => {
-    if (paymentMethod === "instapay") {
+  // Apply 50% discount on shipping for electronic payments (InstaPay, Vodafone Cash & E-wallets)
+  const isElectronicPayment = paymentMethod === "instapay" || paymentMethod === "vodafone_cash";
+  const shippingDiscount = useMemo(() => {
+    if (isElectronicPayment) {
       return Math.round(baseShippingCost * 0.5);
     }
-    return baseShippingCost;
-  }, [baseShippingCost, paymentMethod]);
+    return 0;
+  }, [baseShippingCost, isElectronicPayment]);
+
+  const shippingCost = useMemo(() => {
+    return Math.max(0, baseShippingCost - shippingDiscount);
+  }, [baseShippingCost, shippingDiscount]);
 
   const grandTotal = Math.max(0, subtotal - discountAmount + shippingCost);
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     const code = couponCode.trim().toUpperCase();
-    if (!code) return;
-
-    if (code === "ZAHRA10" || code === "زهره10") {
-      const disc = Math.round(subtotal * 0.1);
-      setDiscountAmount(disc);
-      setAppliedCoupon(code);
-      toast.success("تم تفعيل كود الخصم 10% بنجاح");
-    } else if (code === "FREE" || code === "مجانا") {
-      setDiscountAmount(shippingCost);
-      setAppliedCoupon(code);
-      toast.success("تم تطبيق شحن مجاني بنجاح");
-    } else {
-      toast.error("كود الخصم غير صحيح أو منتهي الصلاحية");
+    if (!code) {
+      toast.error("يرجى إدخال كود الخصم");
+      return;
     }
+
+    setIsValidatingCoupon(true);
+    try {
+      const result = await CouponService.validate(code, subtotal);
+      if (result && result.valid) {
+        setDiscountAmount(result.discountAmount);
+        setAppliedCoupon(result.code);
+        setCouponDetails(result);
+        toast.success(result.message || `تم تطبيق كود الخصم ${result.code} بنجاح!`);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "كود الخصم غير صحيح أو منتهي الصلاحية");
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponDetails(null);
+    setDiscountAmount(0);
+    setCouponCode("");
+    toast.info("تم إلغاء كود الخصم");
   };
 
   const copyToClipboard = (text: string, type: "insta" | "voda") => {
@@ -179,8 +202,10 @@ export default function CheckoutPage() {
         paymentMethod,
         paymentReference: paymentReference || undefined,
         subtotal,
-        shippingCost,
+        shippingCost: baseShippingCost,
+        shippingDiscount,
         discount: discountAmount,
+        couponCode: appliedCoupon || undefined,
         total: grandTotal,
       });
 
@@ -266,21 +291,89 @@ export default function CheckoutPage() {
               </div>
             ))}
 
+            {/* Mobile Discount Code Form & Status */}
+            <div className="pt-3 border-t border-stone-200">
+              <label className="text-xs font-bold text-[#5C4A42] block mb-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Tag size={13} className="text-[#8B1A2E]" />
+                  <span>كود الخصم (Promo Code)</span>
+                </span>
+                {appliedCoupon && (
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    مفعّل
+                  </span>
+                )}
+              </label>
+
+              {appliedCoupon ? (
+                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                  <div>
+                    <span className="font-mono font-bold text-xs text-emerald-900 tracking-wider">
+                      {appliedCoupon}
+                    </span>
+                    <span className="text-[10px] text-emerald-700 block">
+                      خصم {formatPrice(discountAmount)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="p-1 text-stone-400 hover:text-rose-600 rounded cursor-pointer"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="كود الخصم (مثال: ZAHRA10)"
+                    disabled={isValidatingCoupon}
+                    className="input-field text-xs uppercase font-mono font-bold"
+                    style={{ minHeight: 36, padding: "6px 10px" }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isValidatingCoupon || !couponCode.trim()}
+                    className="btn-outline h-9 px-3 text-xs font-bold flex-shrink-0 cursor-pointer disabled:opacity-50 flex items-center gap-1"
+                  >
+                    {isValidatingCoupon ? <Loader2 size={12} className="animate-spin" /> : null}
+                    <span>تطبيق</span>
+                  </button>
+                </form>
+              )}
+            </div>
+
             <div className="pt-3 text-xs sm:text-sm space-y-2 text-[#5C4A42]">
               <div className="flex justify-between">
                 <span>المجموع الفرعي</span>
-                <span className="font-bold">{formatPrice(subtotal)}</span>
+                <span className="font-bold text-[#1A0C08]">{formatPrice(subtotal)}</span>
               </div>
               {discountAmount > 0 && (
-                <div className="flex justify-between text-emerald-600 font-bold">
-                  <span>الخصم المطبق</span>
+                <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50/70 p-1.5 rounded-lg border border-emerald-100">
+                  <span>خصم الكوبون ({appliedCoupon})</span>
                   <span>-{formatPrice(discountAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span>مصاريف الشحن ({formData.governorate})</span>
-                <span className="font-bold">{formatPrice(shippingCost)}</span>
+                <div className="text-left">
+                  {isElectronicPayment && (
+                    <span className="text-[11px] text-stone-400 line-through ml-1.5">
+                      {formatPrice(baseShippingCost)}
+                    </span>
+                  )}
+                  <span className="font-bold text-[#1A0C08]">{formatPrice(shippingCost)}</span>
+                </div>
               </div>
+              {isElectronicPayment && (
+                <div className="text-[10px] text-emerald-800 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-200 flex items-center gap-1.5">
+                  <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                  <span>خصم 50% على مصاريف الشحن مفعّل!</span>
+                </div>
+              )}
               <div className="pt-3 border-t border-stone-200 flex justify-between text-sm sm:text-base font-black text-[#1A0C08]">
                 <span>الإجمالي النهائي</span>
                 <span className="text-lg text-[#8B1A2E]">{formatPrice(grandTotal)}</span>
@@ -543,16 +636,21 @@ export default function CheckoutPage() {
                       : "border-stone-200 bg-stone-50/50 hover:border-stone-300"
                   }`}
                 >
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={paymentMethod === "cod"}
-                      onChange={() => setPaymentMethod("cod")}
-                      className="w-4 h-4 accent-[#8B1A2E]"
-                    />
-                    <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
-                      الدفع عند الاستلام (Cash on Delivery) 💵
+                  <label className="flex items-center justify-between cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === "cod"}
+                        onChange={() => setPaymentMethod("cod")}
+                        className="w-4 h-4 accent-[#8B1A2E]"
+                      />
+                      <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
+                        الدفع عند الاستلام (Cash on Delivery) 💵
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                      وفر 50% بالدفع الإلكتروني
                     </span>
                   </label>
 
@@ -564,11 +662,14 @@ export default function CheckoutPage() {
                       <p>
                         قد تحتاج بعض الطلبات إلى دفع عربون بسيط لتأكيد الجدية وسرعة الشحن. بعد إتمام الطلب، سيتواصل معكِ فريق خدمة العملاء لتأكيد التفاصيل. يُخصم مبلغ العربون من إجمالي الطلب، ويتم دفع المبلغ المتبقي عند الاستلام والمعاينة.
                       </p>
+                      <div className="mt-2.5 pt-2 border-t border-[#EDE0D4] text-emerald-700 font-bold flex items-center gap-1.5 text-xs">
+                        <span>💡 نصيحة: ادفعي عبر إنستاباي أو فودافون كاش واحصلي على خصم 50% فوراً على مصاريف الشحن!</span>
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* Method 2: Vodafone Cash */}
+                {/* Method 2: Vodafone Cash (With 50% discount on shipping) */}
                 <div
                   onClick={() => setPaymentMethod("vodafone_cash")}
                   className={`p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all ${
@@ -577,21 +678,31 @@ export default function CheckoutPage() {
                       : "border-stone-200 bg-stone-50/50 hover:border-stone-300"
                   }`}
                 >
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={paymentMethod === "vodafone_cash"}
-                      onChange={() => setPaymentMethod("vodafone_cash")}
-                      className="w-4 h-4 accent-[#8B1A2E]"
-                    />
-                    <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
-                      فودافون كاش (Vodafone Cash) 📱
+                  <label className="flex items-center justify-between cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === "vodafone_cash"}
+                        onChange={() => setPaymentMethod("vodafone_cash")}
+                        className="w-4 h-4 accent-[#8B1A2E]"
+                      />
+                      <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
+                        فودافون كاش والمحافظ الإلكترونية (Vodafone Cash) 📱
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                      خصم 50% على الشحن
                     </span>
                   </label>
 
                   {paymentMethod === "vodafone_cash" && (
                     <div className="mt-4 p-4 rounded-xl bg-[#FDF8F5] border border-[#EDE0D4] space-y-3.5 text-xs sm:text-sm">
+                      <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                        <span>تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط بدلاً من {formatPrice(baseShippingCost)}!</span>
+                      </div>
+
                       <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-stone-200">
                         <div>
                           <span className="text-[#9E8075] block text-[11px]">رقم محفظة فودافون كاش:</span>
@@ -600,7 +711,7 @@ export default function CheckoutPage() {
                         <button
                           type="button"
                           onClick={() => copyToClipboard("01099887766", "voda")}
-                          className="btn-outline h-9 px-3.5 text-xs flex items-center gap-1.5"
+                          className="btn-outline h-9 px-3.5 text-xs flex items-center gap-1.5 cursor-pointer"
                         >
                           {copiedVodafone ? <Check size={14} /> : <Copy size={14} />}
                           <span>{copiedVodafone ? "تم النسخ" : "نسخ الرقم"}</span>
@@ -622,7 +733,7 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
-                {/* Method 3: InstaPay (With 50% discount on shipping matching image) */}
+                {/* Method 3: InstaPay (With 50% discount on shipping) */}
                 <div
                   onClick={() => setPaymentMethod("instapay")}
                   className={`p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all ${
@@ -641,7 +752,7 @@ export default function CheckoutPage() {
                         className="w-4 h-4 accent-[#8B1A2E]"
                       />
                       <span className="text-sm sm:text-base font-bold text-[#1A0C08]">
-                        الدفع عبر إنستاباي (InstaPay)
+                        الدفع عبر إنستاباي (InstaPay) ⚡
                       </span>
                     </div>
                     <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
@@ -651,6 +762,11 @@ export default function CheckoutPage() {
 
                   {paymentMethod === "instapay" && (
                     <div className="mt-4 p-4 rounded-xl bg-[#FDF8F5] border border-[#EDE0D4] space-y-3.5 text-xs sm:text-sm">
+                      <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                        <span>تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط بدلاً من {formatPrice(baseShippingCost)}!</span>
+                      </div>
+
                       <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-stone-200">
                         <div>
                           <span className="text-[#9E8075] block text-[11px]">عنوان الدفع (IPA):</span>
@@ -775,29 +891,73 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            {/* Discount Code Form */}
-            <form onSubmit={handleApplyCoupon} className="mb-5 pt-4 border-t border-[#EDE0D4]">
-              <label className="text-xs font-bold text-[#5C4A42] block mb-1.5">
-                كود الخصم (Discount Code)
+            {/* Discount Code Form & Status */}
+            <div className="mb-5 pt-4 border-t border-[#EDE0D4]">
+              <label className="text-xs font-bold text-[#5C4A42] block mb-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Tag size={14} className="text-[#8B1A2E]" />
+                  <span>كود الخصم (Promo Code)</span>
+                </span>
+                {appliedCoupon && (
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    مفعّل بنجاح
+                  </span>
+                )}
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  placeholder="ادخلي الكود (مثال: ZAHRA10)"
-                  className="input-field text-xs uppercase"
-                  style={{ minHeight: 40, padding: "8px 12px" }}
-                />
-                <button
-                  type="submit"
-                  className="btn-outline h-10 px-4 text-xs font-bold flex-shrink-0"
-                  style={{ minHeight: 40 }}
-                >
-                  تطبيق
-                </button>
-              </div>
-            </form>
+
+              {appliedCoupon ? (
+                <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs shadow-xs">
+                      %
+                    </div>
+                    <div>
+                      <div className="font-mono font-black text-sm text-emerald-950 tracking-wider">
+                        {appliedCoupon}
+                      </div>
+                      <div className="text-[11px] text-emerald-700 font-bold">
+                        وفرت {formatPrice(discountAmount)} من إجمالي المشتريات
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    title="إلغاء الكوبون"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="ادخلي الكود (مثال: ZAHRA10)"
+                    disabled={isValidatingCoupon}
+                    className="input-field text-xs uppercase font-mono font-bold"
+                    style={{ minHeight: 40, padding: "8px 12px" }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isValidatingCoupon || !couponCode.trim()}
+                    className="btn-outline h-10 px-4 text-xs font-bold flex-shrink-0 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                    style={{ minHeight: 40 }}
+                  >
+                    {isValidatingCoupon ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        <span>جاري الفحص...</span>
+                      </>
+                    ) : (
+                      <span>تطبيق</span>
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
 
             {/* Calculations Breakdown */}
             <div className="space-y-2.5 text-xs sm:text-sm text-[#5C4A42] pt-4 border-t border-[#EDE0D4]">
@@ -807,20 +967,33 @@ export default function CheckoutPage() {
               </div>
 
               {discountAmount > 0 && (
-                <div className="flex justify-between text-emerald-600 font-bold">
-                  <span>الخصم المطبق ({appliedCoupon})</span>
+                <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50/70 p-2 rounded-xl border border-emerald-100">
+                  <span className="flex items-center gap-1.5">
+                    <Tag size={14} />
+                    <span>خصم الكوبون ({appliedCoupon})</span>
+                  </span>
                   <span>-{formatPrice(discountAmount)}</span>
                 </div>
               )}
 
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span>مصاريف الشحن ({formData.governorate})</span>
-                <span className="font-bold text-[#1A0C08]">{formatPrice(shippingCost)}</span>
+                <div className="text-left">
+                  {isElectronicPayment && (
+                    <span className="text-xs text-stone-400 line-through ml-2">
+                      {formatPrice(baseShippingCost)}
+                    </span>
+                  )}
+                  <span className="font-bold text-[#1A0C08]">{formatPrice(shippingCost)}</span>
+                </div>
               </div>
 
-              {paymentMethod === "instapay" && (
-                <div className="text-[11px] text-emerald-700 font-bold bg-emerald-50 p-2 rounded-lg">
-                  ⚡ خصم 50% على الشحن مفعل لاختيارك إنستاباي!
+              {isElectronicPayment && (
+                <div className="text-[11px] text-emerald-800 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                  <span>
+                    ⚡ وفرت {formatPrice(shippingDiscount)} (خصم 50% على الشحن) باختيارك {paymentMethod === "instapay" ? "إنستاباي" : "فودافون كاش والمحافظ"}!
+                  </span>
                 </div>
               )}
 

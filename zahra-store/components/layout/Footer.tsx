@@ -255,8 +255,8 @@ export default function Footer() {
               <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-bold border border-white/10">
                 الدفع عند الاستلام (كاش)
               </span>
-              <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-bold border border-white/10">
-                فودافون كاش والمحافظ الإلكترونية
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                فودافون كاش والمحافظ الإلكترونية (خصم 50% على الشحن)
               </span>
               <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
                 إنستاباي InstaPay (خصم 50% على الشحن)

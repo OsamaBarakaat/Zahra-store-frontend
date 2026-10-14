@@ -127,6 +127,8 @@ export interface Order {
   subtotal: number;
   shippingCost: number;
   discount: number;
+  shippingDiscount?: number;
+  couponCode?: string;
   total: number;
   status: OrderStatus;
   createdAt: string;

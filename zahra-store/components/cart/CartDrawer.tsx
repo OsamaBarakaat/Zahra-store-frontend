@@ -351,9 +351,28 @@ export default function CartDrawer() {
                   {formatPrice(subtotal)}
                 </span>
               </div>
-              <p style={{ fontSize: 12, color: "var(--color-muted)", marginBottom: 16 }}>
+              <p style={{ fontSize: 12, color: "var(--color-muted)", marginBottom: 12 }}>
                 يتم حساب تكلفة الشحن بدقة في الخطوة التالية حسب محافظتك.
               </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "10px 12px",
+                  borderRadius: 12,
+                  background: "#ECFDF5",
+                  border: "1px solid #A7F3D0",
+                  marginBottom: 14,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "#065F46",
+                }}
+              >
+                <span style={{ fontSize: 15 }}>⚡</span>
+                <span>خصم 50% على الشحن عند الدفع بإنستاباي أو فودافون كاش</span>
+              </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <button

@@ -2,6 +2,7 @@ import { CookieStorage } from '@/lib/utils/cookies';
 
 export interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
+  throwOnError?: boolean;
 }
 
 export class HttpClient {
@@ -84,22 +85,35 @@ export class HttpClient {
       });
 
       if (!res.ok) {
-        console.warn(`HTTP ${res.status} on ${url}`);
+        let errorMsg = `HTTP ${res.status}`;
+        try {
+          const errJson = await res.json();
+          if (errJson?.message) {
+            errorMsg = Array.isArray(errJson.message) ? errJson.message.join(', ') : errJson.message;
+          }
+        } catch (_) {}
+        console.warn(`HTTP ${res.status} on ${url}:`, errorMsg);
+        if (options.throwOnError) {
+          throw new Error(errorMsg);
+        }
         return null;
       }
 
       return (await res.json()) as T;
     } catch (error) {
+      if (options.throwOnError) {
+        throw error;
+      }
       console.warn(`Fetch error on ${url}:`, error);
       return null;
     }
   }
 
-  public get<T>(endpoint: string, params?: Record<string, any>, init?: RequestInit): Promise<T | null> {
+  public get<T>(endpoint: string, params?: Record<string, any>, init?: RequestOptions): Promise<T | null> {
     return this.request<T>(endpoint, { method: 'GET', params, ...init });
   }
 
-  public post<T>(endpoint: string, body?: any, init?: RequestInit): Promise<T | null> {
+  public post<T>(endpoint: string, body?: any, init?: RequestOptions): Promise<T | null> {
     const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -108,7 +122,7 @@ export class HttpClient {
     });
   }
 
-  public put<T>(endpoint: string, body?: any, init?: RequestInit): Promise<T | null> {
+  public put<T>(endpoint: string, body?: any, init?: RequestOptions): Promise<T | null> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: JSON.stringify(body),
@@ -116,7 +130,7 @@ export class HttpClient {
     });
   }
 
-  public delete<T>(endpoint: string, init?: RequestInit): Promise<T | null> {
+  public delete<T>(endpoint: string, init?: RequestOptions): Promise<T | null> {
     return this.request<T>(endpoint, { method: 'DELETE', ...init });
   }
 }

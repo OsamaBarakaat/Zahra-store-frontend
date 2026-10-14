@@ -190,3 +190,30 @@ export const AuthService = {
     httpClient.clearAuthToken();
   },
 };
+
+/**
+ * ── 7. COUPON SERVICE (Validate promo codes against live database) ──
+ */
+export interface CouponValidationResult {
+  valid: boolean;
+  code: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  discountAmount: number;
+  minOrderAmount?: number;
+  maxDiscountAmount?: number | null;
+  message: string;
+}
+
+export const CouponService = {
+  async validate(code: string, subtotal: number): Promise<CouponValidationResult> {
+    const res = await httpClient.post<CouponValidationResult>(
+      "/coupons/validate",
+      { code: code.trim().toUpperCase(), subtotal },
+      { throwOnError: true }
+    );
+    if (res) return res;
+    throw new Error("فشل التحقق من كود الخصم");
+  },
+};
+
