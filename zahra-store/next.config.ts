@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "picsum.photos" },
       { protocol: "https", hostname: "via.placeholder.com" },
+      { protocol: "https", hostname: "**.supabase.co" },
+      { protocol: "https", hostname: "oyiqebjljvmjuxhsivqq.supabase.co" },
+      { protocol: "https", hostname: "zahra-store-data.vercel.app" },
     ],
   },
   experimental: {

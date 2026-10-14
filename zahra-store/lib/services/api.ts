@@ -14,37 +14,37 @@ export { CookieStorage } from "@/lib/utils/cookies";
  */
 export const ProductService = {
   async getAll(): Promise<Product[]> {
-    const data = await httpClient.get<Product[]>("/products", undefined, { next: { revalidate: 60 } });
+    const data = await httpClient.get<Product[]>("/products", undefined, { cache: "no-store" });
     if (data && Array.isArray(data) && data.length > 0) return data;
     return products;
   },
 
   async getBySlug(slug: string): Promise<Product | null> {
-    const data = await httpClient.get<Product>(`/products/${slug}`, undefined, { next: { revalidate: 60 } });
+    const data = await httpClient.get<Product>(`/products/${slug}`, undefined, { cache: "no-store" });
     if (data) return data;
     return getProductBySlug(slug) || null;
   },
 
   async getFeatured(): Promise<Product[]> {
-    const data = await httpClient.get<Product[]>("/products/featured", undefined, { next: { revalidate: 60 } });
+    const data = await httpClient.get<Product[]>("/products/featured", undefined, { cache: "no-store" });
     if (data && Array.isArray(data) && data.length > 0) return data;
     return getFeaturedProducts();
   },
 
   async getSale(): Promise<Product[]> {
-    const data = await httpClient.get<Product[]>("/products/sale", undefined, { next: { revalidate: 60 } });
+    const data = await httpClient.get<Product[]>("/products/sale", undefined, { cache: "no-store" });
     if (data && Array.isArray(data) && data.length > 0) return data;
     return getSaleProducts();
   },
 
   async getByCategory(categorySlug: string): Promise<Product[]> {
-    const data = await httpClient.get<Product[]>(`/categories/${categorySlug}/products`, undefined, { next: { revalidate: 60 } });
+    const data = await httpClient.get<Product[]>(`/categories/${categorySlug}/products`, undefined, { cache: "no-store" });
     if (data && Array.isArray(data) && data.length > 0) return data;
     return getProductsByCategory(categorySlug);
   },
 
   async search(query: string): Promise<Product[]> {
-    const data = await httpClient.get<Product[]>("/search", { q: query });
+    const data = await httpClient.get<Product[]>("/search", { q: query }, { cache: "no-store" });
     if (data && Array.isArray(data) && data.length > 0) return data;
     return searchProducts(query);
   },
@@ -55,13 +55,13 @@ export const ProductService = {
  */
 export const CategoryService = {
   async getAll(): Promise<Category[]> {
-    const data = await httpClient.get<Category[]>("/categories", undefined, { next: { revalidate: 3600 } });
+    const data = await httpClient.get<Category[]>("/categories", undefined, { cache: "no-store" });
     if (data && Array.isArray(data) && data.length > 0) return data;
     return categories;
   },
 
   async getBySlug(slug: string): Promise<Category | null> {
-    const data = await httpClient.get<Category>(`/categories/${slug}`, undefined, { next: { revalidate: 3600 } });
+    const data = await httpClient.get<Category>(`/categories/${slug}`, undefined, { cache: "no-store" });
     if (data) return data;
     return getCategoryBySlug(slug) || null;
   },

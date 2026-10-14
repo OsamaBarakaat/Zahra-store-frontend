@@ -11,7 +11,12 @@ interface ProductGalleryProps {
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  if (!images || images.length === 0) {
+  const sortedImages = React.useMemo(() => {
+    if (!images || images.length === 0) return [];
+    return [...images].sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
+  }, [images]);
+
+  if (!sortedImages || sortedImages.length === 0) {
     return (
       <div className="relative aspect-square w-full rounded-2xl bg-stone-100 overflow-hidden border border-[#EDE0D4]">
         <Image src="/logo/zahra-logo.png" alt={productName} fill className="object-contain p-8" />
@@ -19,7 +24,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     );
   }
 
-  const currentImage = images[selectedIndex] || images[0];
+  const currentImage = sortedImages[selectedIndex] || sortedImages[0];
 
   return (
     <div className="flex flex-col gap-3">
@@ -36,9 +41,9 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
       </div>
 
       {/* Thumbnails row (mobile & desktop) */}
-      {images.length > 1 && (
+      {sortedImages.length > 1 && (
         <div className="flex gap-2.5 overflow-x-auto pb-1 scroll-x">
-          {images.map((img, idx) => (
+          {sortedImages.map((img, idx) => (
             <button
               key={img.id || idx}
               type="button"

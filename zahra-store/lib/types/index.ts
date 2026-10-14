@@ -1,8 +1,10 @@
 // ─── Product ──────────────────────────────────────────────────────────────
 export interface ProductImage {
-  id: string;
+  id?: string;
   url: string;
-  alt: string;
+  alt?: string;
+  is_primary?: boolean;
+  sort_order?: number;
 }
 
 export interface ProductVariant {

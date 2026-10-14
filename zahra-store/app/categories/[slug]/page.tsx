@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { CategoryService, ProductService } from "@/lib/services/api";
 import ProductListContent from "@/components/product/ProductListContent";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }

@@ -4,6 +4,9 @@ import { ProductService } from "@/lib/services/api";
 import ProductDetailClient from "@/components/product/ProductDetailClient";
 import { getRelatedProducts } from "@/lib/data/products";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -18,6 +21,8 @@ export async function generateMetadata({ params }: ProductPageProps) {
     };
   }
 
+  const primaryImage = product.images?.find((img) => img.is_primary)?.url || product.images?.[0]?.url || "/logo/zahra-logo.png";
+
   return {
     title: `${product.name} | زهره ستور`,
     description: product.description,
@@ -26,7 +31,7 @@ export async function generateMetadata({ params }: ProductPageProps) {
       description: product.description,
       images: [
         {
-          url: product.images[0]?.url || "/logo.png",
+          url: primaryImage,
           alt: product.name,
         },
       ],

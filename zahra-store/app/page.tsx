@@ -10,6 +10,9 @@ import SocialProofSection from "@/components/home/SocialProofSection";
 import ProductGrid from "@/components/product/ProductGrid";
 import { ProductService, CategoryService } from "@/lib/services/api";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function HomePage() {
   const [featuredProducts, categories, saleProducts] = await Promise.all([
     ProductService.getFeatured(),

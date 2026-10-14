@@ -23,6 +23,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const toast = useToastStore();
 
   const isLiked = isInWishlist(product.id);
+  const primaryImage = product.images?.find((img) => img.is_primary)?.url || product.images?.[0]?.url || "/logo/zahra-logo.png";
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
       name: product.name,
       price: product.price,
       originalPrice: product.originalPrice,
-      image: product.images[0]?.url || "/logo/zahra-logo.png",
+      image: primaryImage,
       quantity: 1,
       selectedVariants: {
         اللون: product.variants.find((v) => v.type === "color")?.name || "الأساسي",
@@ -60,7 +61,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
       name: product.name,
       price: product.price,
       originalPrice: product.originalPrice,
-      image: product.images[0]?.url || "/logo/zahra-logo.png",
+      image: primaryImage,
       addedAt: new Date().toISOString(),
     });
 
@@ -79,7 +80,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         className="relative block aspect-square w-full overflow-hidden bg-stone-50"
       >
         <Image
-          src={product.images[0]?.url || "/logo/zahra-logo.png"}
+          src={primaryImage}
           alt={product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
