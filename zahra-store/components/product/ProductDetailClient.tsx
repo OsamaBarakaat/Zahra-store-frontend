@@ -43,16 +43,99 @@ export default function ProductDetailClient({
 
   const isLiked = isInWishlist(product.id);
 
-  // Variations state
-  const colors = product.variants.filter((v) => v.type === "color");
+  // Variations state - dynamically loaded from backend or product variants
+  const availableColorsList =
+    product.availableColors && product.availableColors.length > 0
+      ? product.availableColors.map((c) => ({
+          id: c.id || `c-${c.name}`,
+          name: c.name,
+          value: c.hex,
+        }))
+      : product.variants
+          .filter((v) => v.type === "color")
+          .map((v) => ({ id: v.id, name: v.name, value: v.value }));
+
+  const colors =
+    availableColorsList.length > 0
+      ? availableColorsList
+      : [
+          { id: "c1", name: "كشمير", value: "#C38D9E" },
+          { id: "c2", name: "كافيه / بيج", value: "#D4B996" },
+          { id: "c3", name: "كحلي", value: "#1B2A4A" },
+          { id: "c4", name: "نبيتي", value: "#671425" },
+          { id: "c5", name: "رصاصي", value: "#708090" },
+          { id: "c6", name: "بترولي", value: "#005F73" },
+          { id: "c7", name: "زيتي", value: "#4F5D2F" },
+          { id: "c8", name: "أسود", value: "#1E1E1E" },
+          { id: "c9", name: "أوف وايت", value: "#F5F5DC" },
+          { id: "c10", name: "هافان", value: "#8B4513" },
+        ];
+
+  const availablePatternsList =
+    product.availablePatterns && product.availablePatterns.length > 0
+      ? product.availablePatterns.map((p) => ({
+          id: p.id || `p-${p.name}`,
+          name: p.name,
+          image: p.image,
+        }))
+      : product.variants
+          .filter((v) => v.type === "pattern")
+          .map((v) => ({ id: v.id, name: v.name, image: v.image }));
+
+  const patterns =
+    availablePatternsList.length > 0
+      ? availablePatternsList
+      : [
+          {
+            id: "pat-1",
+            name: "مربعات وجواها زهور",
+            image:
+              "https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?w=400&fit=crop",
+          },
+          {
+            id: "pat-2",
+            name: "ورود بارزة دائرية",
+            image:
+              "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&fit=crop",
+          },
+        ];
+
+  const customFeeAmount =
+    product.customFee !== undefined && product.customFee !== null
+      ? Number(product.customFee)
+      : 200;
+
+  const rawCoverTypes = product.variants.filter((v) => v.type === "cover_type");
+  const coverTypes =
+    rawCoverTypes.length > 0
+      ? rawCoverTypes
+      : [
+          {
+            id: "ct-1",
+            name: "عادي (للكرسي الخشبي القياسي)",
+            priceModifier: 0,
+            type: "cover_type",
+            value: "standard",
+            available: true,
+          },
+          {
+            id: "ct-2",
+            name: "عمولة على مقاس الكرسي",
+            priceModifier: customFeeAmount,
+            type: "cover_type",
+            value: "custom",
+            available: true,
+          },
+        ];
+
   const sizes = product.variants.filter((v) => v.type === "size");
-  const patterns = product.variants.filter((v) => v.type === "pattern");
-  const coverTypes = product.variants.filter((v) => v.type === "cover_type");
 
   const isChairCover =
     product.isChairCover ||
     product.slug.includes("chair-cover") ||
-    product.name.includes("تلبيسة");
+    product.name.includes("تلبيسة") ||
+    product.name.includes("كراسي") ||
+    product.name.includes("كرسي");
 
   const [selectedColor, setSelectedColor] = useState<string>(
     colors[0]?.name || "وردي غامق"
@@ -72,9 +155,9 @@ export default function ProductDetailClient({
   const [isAdding, setIsAdding] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Price calculation based on custom cover (+200 EGP)
+  // Price calculation based on custom cover (+customFeeAmount EGP)
   const isCustom = selectedCoverType.includes("عمولة");
-  const priceModifier = isCustom ? 200 : 0;
+  const priceModifier = isCustom ? customFeeAmount : 0;
   const currentPrice = product.price + priceModifier;
   const currentOriginalPrice = product.originalPrice
     ? product.originalPrice + priceModifier
@@ -119,8 +202,12 @@ export default function ProductDetailClient({
     // Validation for custom chair cover photo
     if (isChairCover && isCustom && !customChairImage) {
       setChairImageError(true);
-      toast.error("يرجى تصوير كرسيك أو رفع صورته لتأكيد طلب التفصيل العمولة 📸");
-      const uploadElement = document.getElementById("chair-photo-upload-section");
+      toast.error(
+        "يرجى تصوير كرسيك أو رفع صورته لتأكيد طلب التفصيل العمولة 📸"
+      );
+      const uploadElement = document.getElementById(
+        "chair-photo-upload-section"
+      );
       uploadElement?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -132,7 +219,7 @@ export default function ProductDetailClient({
       name: product.name,
       price: currentPrice,
       originalPrice: currentOriginalPrice,
-      image: product.images[0]?.url || "/logo/zahra-logo.png",
+      image: product.images[0]?.url || "/logo/zahra-logoo.png",
       quantity,
       selectedVariants: {
         ...(selectedColor ? { "لون القماش": selectedColor } : {}),
@@ -140,14 +227,17 @@ export default function ProductDetailClient({
         ...(coverTypes.length > 0
           ? {
               "نوع التلبيسة": isCustom
-                ? "عمولة على مقاس الكرسي (+200 جنيه)"
+                ? `عمولة على مقاس الكرسي (+${customFeeAmount} جنيه)`
                 : "عادي (للكرسي الخشبي القياسي)",
             }
           : {}),
-        ...(isChairCover ? { "محتويات الطقم": `طقم سفرة كامل (${quantity * 6} تلبيسات كراسي)` } : {}),
+        ...(isChairCover
+          ? { "محتويات الطقم": `طقم سفرة كامل (${quantity * 6} تلبيسات كراسي)` }
+          : {}),
         ...(selectedSize && sizes.length > 0 ? { المقاس: selectedSize } : {}),
       },
-      customChairImage: isCustom && customChairImage ? customChairImage : undefined,
+      customChairImage:
+        isCustom && customChairImage ? customChairImage : undefined,
     });
 
     toast.success(`تمت إضافة "${product.name}" إلى السلة 🛍️`);
@@ -163,8 +253,12 @@ export default function ProductDetailClient({
   const handleBuyNow = () => {
     if (isChairCover && isCustom && !customChairImage) {
       setChairImageError(true);
-      toast.error("يرجى تصوير كرسيك أو رفع صورته لتأكيد طلب التفصيل العمولة 📸");
-      const uploadElement = document.getElementById("chair-photo-upload-section");
+      toast.error(
+        "يرجى تصوير كرسيك أو رفع صورته لتأكيد طلب التفصيل العمولة 📸"
+      );
+      const uploadElement = document.getElementById(
+        "chair-photo-upload-section"
+      );
       uploadElement?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -179,7 +273,7 @@ export default function ProductDetailClient({
       name: product.name,
       price: currentPrice,
       originalPrice: currentOriginalPrice,
-      image: product.images[0]?.url || "/logo/zahra-logo.png",
+      image: product.images[0]?.url || "/logo/zahra-logoo.png",
       addedAt: new Date().toISOString(),
     });
 
@@ -193,14 +287,28 @@ export default function ProductDetailClient({
   return (
     <div className="container-zahra py-10 sm:py-16 lg:py-20">
       {/* Breadcrumb Navigation */}
-      <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs sm:text-sm text-[#7A645A] mb-8">
-        <Link href="/" className="hover:text-[#8B1A2E] font-medium">الرئيسية</Link>
+      <nav
+        aria-label="مسار التنقل"
+        className="flex items-center gap-2 text-xs sm:text-sm text-[#7A645A] mb-8"
+      >
+        <Link href="/" className="hover:text-[#8B1A2E] font-medium">
+          الرئيسية
+        </Link>
         <ChevronLeft size={14} />
-        <Link href="/products" className="hover:text-[#8B1A2E] font-medium">المنتجات</Link>
+        <Link href="/products" className="hover:text-[#8B1A2E] font-medium">
+          المنتجات
+        </Link>
         <ChevronLeft size={14} />
-        <Link href={`/categories/${product.category}`} className="hover:text-[#8B1A2E] font-medium">{product.categoryName}</Link>
+        <Link
+          href={`/categories/${product.category}`}
+          className="hover:text-[#8B1A2E] font-medium"
+        >
+          {product.categoryName}
+        </Link>
         <ChevronLeft size={14} />
-        <span className="text-[#1A0C08] font-bold truncate max-w-[180px] sm:max-w-xs">{product.name}</span>
+        <span className="text-[#1A0C08] font-bold truncate max-w-[180px] sm:max-w-xs">
+          {product.name}
+        </span>
       </nav>
 
       {/* Main Product Layout */}
@@ -225,7 +333,10 @@ export default function ProductDetailClient({
                 aria-label="إضافة للمفضلة"
                 className="w-11 h-11 rounded-full border border-[#EDE0D4] bg-white flex items-center justify-center text-stone-600 hover:text-[#8B1A2E] active:scale-95 transition-all shadow-xs cursor-pointer"
               >
-                <Heart size={20} className={isLiked ? "fill-[#8B1A2E] text-[#8B1A2E]" : ""} />
+                <Heart
+                  size={20}
+                  className={isLiked ? "fill-[#8B1A2E] text-[#8B1A2E]" : ""}
+                />
               </button>
             </div>
 
@@ -240,12 +351,20 @@ export default function ProductDetailClient({
                   <Star
                     key={i}
                     size={16}
-                    className={i < Math.floor(product.rating) ? "fill-amber-400" : "text-stone-300"}
+                    className={
+                      i < Math.floor(product.rating)
+                        ? "fill-amber-400"
+                        : "text-stone-300"
+                    }
                   />
                 ))}
               </div>
-              <span className="text-xs font-bold text-[#1A0C08]">{product.rating}</span>
-              <span className="text-xs text-[#9E8075]">({product.reviewCount} تقييم حقيقي)</span>
+              <span className="text-xs font-bold text-[#1A0C08]">
+                {product.rating}
+              </span>
+              <span className="text-xs text-[#9E8075]">
+                ({product.reviewCount} تقييم حقيقي)
+              </span>
             </div>
           </div>
 
@@ -265,10 +384,10 @@ export default function ProductDetailClient({
               <p className="text-[11px] text-[#9E8075] mt-0.5">
                 {isChairCover
                   ? isCustom
-                    ? "السعر يشمل طقم كامل 6 كراسي (150) + 200 جنيه تفصيل عمولة مخصوص للطقم"
+                    ? `السعر يشمل طقم كامل 6 كراسي + ${customFeeAmount} جنيه تفصيل عمولة مخصوص للطقم`
                     : "السعر لطقم سفرة كامل مكون من 6 تلبيسات كراسي"
                   : isCustom
-                  ? "السعر العادي (150) + 200 جنيه تفصيل عمولة مخصوص"
+                  ? `السعر العادي + ${customFeeAmount} جنيه تفصيل عمولة مخصوص`
                   : "شامل ضريبة المبيعات • الدفع عند الاستلام متاح"}
               </p>
             </div>
@@ -289,7 +408,9 @@ export default function ProductDetailClient({
             <div className="p-4 rounded-2xl bg-gradient-to-r from-[#FDF8F5] via-[#FFF] to-[#F2D4CC]/40 border-2 border-[#E8A4A0] flex items-center gap-3.5 shadow-xs">
               <div className="w-11 h-11 rounded-2xl bg-[#8B1A2E] text-white flex flex-col items-center justify-center font-black flex-shrink-0 shadow-xs">
                 <span className="text-base leading-none">6</span>
-                <span className="text-[9px] leading-tight font-medium opacity-90">كراسي</span>
+                <span className="text-[9px] leading-tight font-medium opacity-90">
+                  كراسي
+                </span>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
@@ -301,7 +422,9 @@ export default function ProductDetailClient({
                   </span>
                 </div>
                 <p className="text-xs text-[#5C4A42] leading-relaxed">
-                  الطلب الواحد يشمل <strong>طقم متكامل مكون من 6 تلبيسات كراسي</strong> تكفي طقم سفرة 6 كراسي بالكامل.
+                  الطلب الواحد يشمل{" "}
+                  <strong>طقم متكامل مكون من 6 تلبيسات كراسي</strong> تكفي طقم
+                  سفرة 6 كراسي بالكامل.
                 </p>
               </div>
             </div>
@@ -349,7 +472,11 @@ export default function ProductDetailClient({
                           className="w-5 h-5 rounded-full border border-black/15 shadow-2xs flex-shrink-0"
                           style={{ backgroundColor: c.value }}
                         />
-                        <span className={`text-xs font-bold truncate ${isSelected ? "text-[#8B1A2E]" : "text-[#1A0C08]"}`}>
+                        <span
+                          className={`text-xs font-bold truncate ${
+                            isSelected ? "text-[#8B1A2E]" : "text-[#1A0C08]"
+                          }`}
+                        >
                           {c.name}
                         </span>
                       </button>
@@ -400,7 +527,11 @@ export default function ProductDetailClient({
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <span className={`text-xs sm:text-sm font-black block mb-0.5 ${isSelected ? "text-[#8B1A2E]" : "text-[#1A0C08]"}`}>
+                            <span
+                              className={`text-xs sm:text-sm font-black block mb-0.5 ${
+                                isSelected ? "text-[#8B1A2E]" : "text-[#1A0C08]"
+                              }`}
+                            >
                               {pat.name}
                             </span>
                             <span className="text-[11px] text-[#7A645A] block">
@@ -435,7 +566,7 @@ export default function ProductDetailClient({
                     </div>
                     {isCustom && (
                       <span className="text-xs font-black text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                        +200 جنيه عمولة
+                        +{customFeeAmount} جنيه عمولة
                       </span>
                     )}
                   </div>
@@ -464,19 +595,29 @@ export default function ProductDetailClient({
                                 className="w-4 h-4 accent-[#8B1A2E]"
                               />
                               <div>
-                                <span className={`text-sm font-black block ${isSelected ? "text-[#8B1A2E]" : "text-[#1A0C08]"}`}>
-                                  {isCustomOption ? "تفصيل عمولة مخصوص (طقم 6 كراسي حسب مقاس كراسيك)" : "مقاس عادي standard (طقم 6 كراسي خشبية قياسية)"}
+                                <span
+                                  className={`text-sm font-black block ${
+                                    isSelected
+                                      ? "text-[#8B1A2E]"
+                                      : "text-[#1A0C08]"
+                                  }`}
+                                >
+                                  {isCustomOption
+                                    ? "تفصيل عمولة مخصوص (طقم 6 كراسي حسب مقاس كراسيك)"
+                                    : "مقاس عادي standard (طقم 6 كراسي خشبية قياسية)"}
                                 </span>
                                 <span className="text-xs text-[#7A645A] mt-0.5 block">
                                   {isCustomOption
-                                    ? "طقم كامل مكون من 6 تلبيسات تفصيل يدوي بالمللي على شكل ومقاس كراسيك (+200 جنيه للطقم بالكامل)"
+                                    ? `طقم كامل مكون من 6 تلبيسات تفصيل يدوي بالمللي على شكل ومقاس كراسيك (+${customFeeAmount} جنيه للطقم بالكامل)`
                                     : "طقم كامل مكون من 6 تلبيسات بمقاس قياسي يناسب كراسي السفرة الخشبية المعتادة"}
                                 </span>
                               </div>
                             </label>
 
                             <span className="text-xs sm:text-sm font-black flex-shrink-0 text-[#8B1A2E]">
-                              {isCustomOption ? "+200 جنيه" : "السعر الأساسي"}
+                              {isCustomOption
+                                ? `+${customFeeAmount} جنيه`
+                                : "السعر الأساسي"}
                             </span>
                           </div>
                         </div>
@@ -502,10 +643,14 @@ export default function ProductDetailClient({
                     </div>
                     <div>
                       <h4 className="text-sm sm:text-base font-black text-[#1A0C08]">
-                        تصوير الكرسي مطلوب للتفصيل العمولة (+200 جنيه)
+                        تصوير الكرسي مطلوب للتفصيل العمولة (+{customFeeAmount}{" "}
+                        جنيه)
                       </h4>
                       <p className="text-xs text-[#5C4A42] mt-1 leading-relaxed">
-                        علشان نعملك التلبيسة عمولة مظبوطة بالمللي على كرسيك، صوّري الكرسي صورة واضحة من الأمام والجنب. سيتواصل معكِ فريقنا بعد تأكيد الطلب لتأكيد المقاسات قبل البدء في التفصيل.
+                        علشان نعملك التلبيسة عمولة مظبوطة بالمللي على كرسيك،
+                        صوّري الكرسي صورة واضحة من الأمام والجنب. سيتواصل معكِ
+                        فريقنا بعد تأكيد الطلب لتأكيد المقاسات قبل البدء في
+                        التفصيل.
                       </p>
                     </div>
                   </div>
@@ -569,7 +714,8 @@ export default function ProductDetailClient({
                     >
                       <span className="text-2xl">📷</span>
                       <span className="text-xs sm:text-sm font-bold text-[#1A0C08]">
-                        اضغطي هنا لالتقاط صورة للكرسي بالكاميرا أو رفعها من المعرض
+                        اضغطي هنا لالتقاط صورة للكرسي بالكاميرا أو رفعها من
+                        المعرض
                       </span>
                       <span className="text-[11px] text-[#7A645A]">
                         (الصيغ المدعومة: JPG، PNG، WEBP)
@@ -579,9 +725,38 @@ export default function ProductDetailClient({
 
                   {chairImageError && (
                     <p className="text-xs font-bold text-red-600 mt-2">
-                      ⚠️ يجب تصوير الكرسي أو إرفاق صورته قبل إضافة المنتج للسلة عند اختيار تفصيل عمولة!
+                      ⚠️ يجب تصوير الكرسي أو إرفاق صورته قبل إضافة المنتج للسلة
+                      عند اختيار تفصيل عمولة!
                     </p>
                   )}
+
+                  {/* Non-refundable Policy Notice & Contact Guarantee */}
+                  <div className="mt-4 p-4 rounded-xl bg-amber-50 border-2 border-amber-300 text-amber-950 flex items-start gap-3 shadow-xs">
+                    <span className="text-xl flex-shrink-0 mt-0.5">⚠️</span>
+                    <div className="text-xs space-y-1.5 flex-1">
+                      <p className="font-black text-amber-950 text-sm">
+                        ملاحظة هامة جداً لأطقم وتلبيسات التفصيل العمولة:
+                      </p>
+                      <p className="text-amber-900 leading-relaxed font-bold">
+                        أطقم التلبيسات التفصيل العمولة يتم تفصيلها وقصّها يدوياً
+                        خصيصاً على مقاسات وشكل كراسيك الخاصة بناءً على صورتك
+                        ومقاساتك، لذلك{" "}
+                        <span className="underline decoration-red-500 font-black text-red-700">
+                          أطقم العمولة لا تُسترد ولا تُستبدل
+                        </span>{" "}
+                        بعد البدء في التفصيل.
+                      </p>
+                      <div className="p-2.5 rounded-lg bg-white/80 border border-amber-200 text-amber-900 font-semibold flex items-center gap-2">
+                        <span>📞</span>
+                        <span>
+                          سيتواصل معكِ فريق عمل <strong>زهرة ستور</strong> فور
+                          تأكيد الطلب لمعاينة صورة الكرسي وتأكيد المقاسات
+                          الدقيقة معكِ وتحديد السعر النهائي المناسب للطقم
+                          العمولة.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -591,8 +766,12 @@ export default function ProductDetailClient({
               {colors.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-[#5C4A42]">اللون المختار:</span>
-                    <span className="text-xs font-extrabold text-[#8B1A2E]">{selectedColor}</span>
+                    <span className="text-xs font-bold text-[#5C4A42]">
+                      اللون المختار:
+                    </span>
+                    <span className="text-xs font-extrabold text-[#8B1A2E]">
+                      {selectedColor}
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-2.5">
                     {colors.map((c) => (
@@ -620,8 +799,12 @@ export default function ProductDetailClient({
               {sizes.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-[#5C4A42]">المقاس المختار:</span>
-                    <span className="text-xs font-extrabold text-[#8B1A2E]">{selectedSize}</span>
+                    <span className="text-xs font-bold text-[#5C4A42]">
+                      المقاس المختار:
+                    </span>
+                    <span className="text-xs font-extrabold text-[#8B1A2E]">
+                      {selectedSize}
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {sizes.map((s) => (
@@ -652,7 +835,9 @@ export default function ProductDetailClient({
               </span>
               {isChairCover && (
                 <span className="text-xs font-black text-[#8B1A2E] bg-[#FDF8F5] px-2.5 py-0.5 rounded-full border border-[#EDE0D4]">
-                  {quantity === 1 ? "طقم واحد = 6 تلبيسات كراسي سفرة" : `${quantity} أطقم = ${quantity * 6} تلبيسة كراسي سفرة`}
+                  {quantity === 1
+                    ? "طقم واحد = 6 تلبيسات كراسي سفرة"
+                    : `${quantity} أطقم = ${quantity * 6} تلبيسة كراسي سفرة`}
                 </span>
               )}
             </div>
@@ -667,7 +852,9 @@ export default function ProductDetailClient({
                 -
               </button>
               <span className="w-24 text-center text-sm font-extrabold text-[#1A0C08]">
-                {isChairCover ? `${quantity} طقم (${quantity * 6} كراسي)` : quantity}
+                {isChairCover
+                  ? `${quantity} طقم (${quantity * 6} كراسي)`
+                  : quantity}
               </span>
               <button
                 type="button"
@@ -681,7 +868,10 @@ export default function ProductDetailClient({
 
             {isChairCover && (
               <p className="text-[11px] text-[#7A645A] mt-2 leading-relaxed">
-                💡 <strong>توضيح مهم:</strong> الطقم يباع على بعضه 6 تلبيسات لطقم سفرة 6 كراسي كاملة. لو سفرتك 6 كراسي اختاري <strong>1 طقم</strong>، ولو 12 كرسي اختاري <strong>2 طقم</strong>.
+                💡 <strong>توضيح مهم:</strong> الطقم يباع على بعضه 6 تلبيسات
+                لطقم سفرة 6 كراسي كاملة. لو سفرتك 6 كراسي اختاري{" "}
+                <strong>1 طقم</strong>، ولو 12 كرسي اختاري{" "}
+                <strong>2 طقم</strong>.
               </p>
             )}
           </div>
@@ -719,21 +909,29 @@ export default function ProductDetailClient({
           <div className="grid grid-cols-3 gap-2.5 pt-4 border-t border-[#EDE0D4] text-center">
             <div className="p-3 rounded-xl bg-white border border-[#EDE0D4] flex flex-col items-center gap-1">
               <ShieldCheck size={20} className="text-[#8B1A2E]" />
-              <span className="text-[11px] font-bold text-[#1A0C08]">معاينة قبل الدفع</span>
+              <span className="text-[11px] font-bold text-[#1A0C08]">
+                معاينة قبل الدفع
+              </span>
             </div>
             <div className="p-3 rounded-xl bg-white border border-[#EDE0D4] flex flex-col items-center gap-1">
               <Truck size={20} className="text-[#8B1A2E]" />
-              <span className="text-[11px] font-bold text-[#1A0C08]">شحن لكل مصر</span>
+              <span className="text-[11px] font-bold text-[#1A0C08]">
+                شحن لكل مصر
+              </span>
             </div>
             <div className="p-3 rounded-xl bg-white border border-[#EDE0D4] flex flex-col items-center gap-1">
               <RotateCcw size={20} className="text-[#8B1A2E]" />
-              <span className="text-[11px] font-bold text-[#1A0C08]">استبدال سهل</span>
+              <span className="text-[11px] font-bold text-[#1A0C08]">
+                استبدال سهل
+              </span>
             </div>
           </div>
 
           {/* Description & Specs */}
           <div className="pt-2">
-            <h3 className="text-sm font-bold text-[#1A0C08] mb-2">وصف المنتج وتفاصيله:</h3>
+            <h3 className="text-sm font-bold text-[#1A0C08] mb-2">
+              وصف المنتج وتفاصيله:
+            </h3>
             <p className="text-xs sm:text-sm text-[#5C4A42] leading-relaxed whitespace-pre-line bg-white p-4 rounded-2xl border border-[#EDE0D4]">
               {product.description}
             </p>
@@ -755,7 +953,10 @@ export default function ProductDetailClient({
             <h2 className="text-xl sm:text-2xl font-black text-[#1A0C08]">
               منتجات قد تعجبكِ أيضاً
             </h2>
-            <Link href={`/categories/${product.category}`} className="text-xs sm:text-sm font-bold text-[#8B1A2E] hover:underline">
+            <Link
+              href={`/categories/${product.category}`}
+              className="text-xs sm:text-sm font-bold text-[#8B1A2E] hover:underline"
+            >
               المزيد من {product.categoryName}
             </Link>
           </div>
@@ -767,7 +968,7 @@ export default function ProductDetailClient({
       <StickyAddToCart
         name={product.name}
         price={currentPrice}
-        image={product.images[0]?.url || "/logo/zahra-logo.png"}
+        image={product.images[0]?.url || "/logo/zahra-logoo.png"}
         onAddToCart={() => handleAddToCart(true)}
         inStock={product.inStock}
       />

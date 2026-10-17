@@ -14,7 +14,11 @@ import {
   ChevronDown,
   Sparkles,
 } from "lucide-react";
-import { InstagramIcon, FacebookIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
+import {
+  InstagramIcon,
+  FacebookIcon,
+  WhatsAppIcon,
+} from "@/components/icons/SocialIcons";
 import { CategoryService } from "@/lib/services/api";
 import { categories as initialCategories } from "@/lib/data/categories";
 import { Category } from "@/lib/types";
@@ -25,7 +29,11 @@ interface MobileDrawerProps {
   categories?: Category[];
 }
 
-export default function MobileDrawer({ isOpen, onClose, categories }: MobileDrawerProps) {
+export default function MobileDrawer({
+  isOpen,
+  onClose,
+  categories,
+}: MobileDrawerProps) {
   const [productsOpen, setProductsOpen] = useState(true);
   const [categoriesList, setCategoriesList] = useState<Category[]>(
     categories && categories.length > 0 ? categories : initialCategories
@@ -78,7 +86,7 @@ export default function MobileDrawer({ isOpen, onClose, categories }: MobileDraw
         <div className="flex items-center justify-between p-5 border-b border-[#EDE0D4] bg-[#FDF8F5]">
           <Link href="/" onClick={onClose} className="relative w-28 h-12">
             <Image
-              src="/logo/zahra-logo.png"
+              src="/logo/zahra-logoo.png"
               alt="زهره ستور"
               fill
               className="object-contain object-right"
@@ -117,7 +125,9 @@ export default function MobileDrawer({ isOpen, onClose, categories }: MobileDraw
               </div>
               <ChevronDown
                 size={16}
-                className={`transition-transform duration-300 ${productsOpen ? "rotate-180" : ""}`}
+                className={`transition-transform duration-300 ${
+                  productsOpen ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -139,7 +149,9 @@ export default function MobileDrawer({ isOpen, onClose, categories }: MobileDraw
                     className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-stone-700 hover:text-[#8B1A2E] hover:bg-white transition-colors"
                   >
                     <span>{cat.name}</span>
-                    <span className="text-[10px] text-stone-400">({cat.productCount})</span>
+                    <span className="text-[10px] text-stone-400">
+                      ({cat.productCount})
+                    </span>
                   </Link>
                 ))}
               </div>

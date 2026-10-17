@@ -15,7 +15,10 @@ interface ProductCardProps {
   priority?: boolean;
 }
 
-export default function ProductCard({ product, priority = false }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  priority = false,
+}: ProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
@@ -23,7 +26,10 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const toast = useToastStore();
 
   const isLiked = isInWishlist(product.id);
-  const primaryImage = product.images?.find((img) => img.is_primary)?.url || product.images?.[0]?.url || "/logo/zahra-logo.png";
+  const primaryImage =
+    product.images?.find((img) => img.is_primary)?.url ||
+    product.images?.[0]?.url ||
+    "/logo/zahra-logoo.png";
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,8 +45,10 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
       image: primaryImage,
       quantity: 1,
       selectedVariants: {
-        اللون: product.variants.find((v) => v.type === "color")?.name || "الأساسي",
-        المقاس: product.variants.find((v) => v.type === "size")?.name || "قياسي",
+        اللون:
+          product.variants.find((v) => v.type === "color")?.name || "الأساسي",
+        المقاس:
+          product.variants.find((v) => v.type === "size")?.name || "قياسي",
       },
     });
 
@@ -91,15 +99,28 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         {/* Badges on top right */}
         <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
           {product.discount && (
-            <Badge variant="sale" className="shadow-xs font-bold text-[11px] sm:text-xs">
+            <Badge
+              variant="sale"
+              className="shadow-xs font-bold text-[11px] sm:text-xs"
+            >
               خصم {product.discount}%
             </Badge>
           )}
           {product.isNew && !product.discount && (
-            <Badge variant="new" className="shadow-xs font-bold text-[11px] sm:text-xs">جديد</Badge>
+            <Badge
+              variant="new"
+              className="shadow-xs font-bold text-[11px] sm:text-xs"
+            >
+              جديد
+            </Badge>
           )}
           {!product.inStock && (
-            <Badge variant="out" className="shadow-xs font-bold text-[11px] sm:text-xs">نفد من المخزون</Badge>
+            <Badge
+              variant="out"
+              className="shadow-xs font-bold text-[11px] sm:text-xs"
+            >
+              نفد من المخزون
+            </Badge>
           )}
         </div>
 
@@ -111,7 +132,11 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         >
           <Heart
             size={18}
-            className={isLiked ? "fill-[#8B1A2E] text-[#8B1A2E]" : "text-stone-600 hover:text-[#8B1A2E]"}
+            className={
+              isLiked
+                ? "fill-[#8B1A2E] text-[#8B1A2E]"
+                : "text-stone-600 hover:text-[#8B1A2E]"
+            }
           />
         </button>
 
@@ -145,7 +170,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
                 <Star size={12} className="fill-amber-400 text-amber-500" />
                 <span>{product.rating}</span>
                 {product.reviewCount && (
-                  <span className="text-stone-400 font-normal">({product.reviewCount})</span>
+                  <span className="text-stone-400 font-normal">
+                    ({product.reviewCount})
+                  </span>
                 )}
               </span>
             )}

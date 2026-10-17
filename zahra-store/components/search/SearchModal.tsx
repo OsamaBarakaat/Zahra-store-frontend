@@ -38,7 +38,9 @@ export default function SearchModal() {
   }, [isOpen]);
 
   const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
-  const [cachedCategories, setCachedCategories] = React.useState<Category[]>([]);
+  const [cachedCategories, setCachedCategories] = React.useState<Category[]>(
+    []
+  );
 
   useEffect(() => {
     if (isOpen && cachedCategories.length === 0) {
@@ -59,11 +61,15 @@ export default function SearchModal() {
       const qLower = val.toLowerCase().trim();
       const [matchedProducts, allCats] = await Promise.all([
         ProductService.search(val),
-        cachedCategories.length > 0 ? Promise.resolve(cachedCategories) : CategoryService.getAll(),
+        cachedCategories.length > 0
+          ? Promise.resolve(cachedCategories)
+          : CategoryService.getAll(),
       ]);
 
       const matchedCategories = allCats.filter(
-        (c) => c.name.toLowerCase().includes(qLower) || c.description?.toLowerCase().includes(qLower)
+        (c) =>
+          c.name.toLowerCase().includes(qLower) ||
+          c.description?.toLowerCase().includes(qLower)
       );
 
       setResults(matchedProducts, matchedCategories);
@@ -104,7 +110,10 @@ export default function SearchModal() {
         }}
       >
         <div className="container-zahra">
-          <form onSubmit={handleSubmit} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: "flex", alignItems: "center", gap: 12 }}
+          >
             <div
               style={{
                 position: "relative",
@@ -188,13 +197,38 @@ export default function SearchModal() {
 
           {/* Quick Suggestions when empty */}
           {!query.trim() && (
-            <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px dashed var(--color-border)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 13, color: "var(--color-muted)" }}>
-                <Sparkles size={15} style={{ color: "var(--color-secondary)" }} />
+            <div
+              style={{
+                marginTop: 18,
+                paddingTop: 14,
+                borderTop: "1px dashed var(--color-border)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 10,
+                  fontSize: 13,
+                  color: "var(--color-muted)",
+                }}
+              >
+                <Sparkles
+                  size={15}
+                  style={{ color: "var(--color-secondary)" }}
+                />
                 <span>عمليات البحث الشائعة:</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {["طقم بياضات قطن", "بيجاما حرير", "ستارة مخمل", "طرحة شيفون", "غطاء كنبة", "إسدالات"].map((tag) => (
+                {[
+                  "طقم بياضات قطن",
+                  "بيجاما حرير",
+                  "ستارة مخمل",
+                  "طرحة شيفون",
+                  "غطاء كنبة",
+                  "إسدالات",
+                ].map((tag) => (
                   <button
                     key={tag}
                     type="button"
@@ -242,7 +276,14 @@ export default function SearchModal() {
             >
               {categoryResults.length > 0 && (
                 <div style={{ marginBottom: 20 }}>
-                  <h4 style={{ fontSize: 14, fontWeight: 700, color: "var(--color-muted)", marginBottom: 10 }}>
+                  <h4
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: "var(--color-muted)",
+                      marginBottom: 10,
+                    }}
+                  >
                     التصنيفات المطابقة:
                   </h4>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -266,15 +307,32 @@ export default function SearchModal() {
                         className="hover:bg-blush"
                       >
                         <span>{cat.name}</span>
-                        <span style={{ fontSize: 11, color: "var(--color-muted)" }}>({cat.productCount} منتج)</span>
+                        <span
+                          style={{ fontSize: 11, color: "var(--color-muted)" }}
+                        >
+                          ({cat.productCount} منتج)
+                        </span>
                       </Link>
                     ))}
                   </div>
                 </div>
               )}
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 14,
+                }}
+              >
+                <h4
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "var(--color-text)",
+                  }}
+                >
                   المنتجات ({results.length})
                 </h4>
                 {results.length > 0 && (
@@ -300,18 +358,27 @@ export default function SearchModal() {
 
               {results.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <p style={{ fontSize: 16, fontWeight: 600, color: "var(--color-text-soft)", marginBottom: 6 }}>
+                  <p
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 600,
+                      color: "var(--color-text-soft)",
+                      marginBottom: 6,
+                    }}
+                  >
                     لم نجد منتجات تطابق &quot;{query}&quot;
                   </p>
                   <p style={{ fontSize: 13, color: "var(--color-muted)" }}>
-                    جربي البحث بكلمات أخرى مثل &quot;بياضات&quot; أو &quot;قطن&quot; أو &quot;بيجاما&quot;
+                    جربي البحث بكلمات أخرى مثل &quot;بياضات&quot; أو
+                    &quot;قطن&quot; أو &quot;بيجاما&quot;
                   </p>
                 </div>
               ) : (
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(240px, 1fr))",
                     gap: 12,
                   }}
                 >
@@ -343,7 +410,9 @@ export default function SearchModal() {
                         }}
                       >
                         <Image
-                          src={product.images[0]?.url || "/logo/zahra-logo.png"}
+                          src={
+                            product.images[0]?.url || "/logo/zahra-logoo.png"
+                          }
                           alt={product.name}
                           fill
                           sizes="56px"
@@ -362,8 +431,20 @@ export default function SearchModal() {
                         >
                           {product.name}
                         </p>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--color-primary)" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 700,
+                              color: "var(--color-primary)",
+                            }}
+                          >
                             {formatPrice(product.price)}
                           </span>
                           {product.originalPrice && (

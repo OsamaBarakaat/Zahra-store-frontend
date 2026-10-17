@@ -41,6 +41,9 @@ export interface Product {
   material?: string;
   dimensions?: string;
   isChairCover?: boolean;   // Flag for chair cover customization flow
+  customFee?: number;       // Custom tailoring extra fee (default 200)
+  availableColors?: { id?: string; name: string; hex?: string; available?: boolean }[];
+  availablePatterns?: { id?: string; name: string; image?: string; available?: boolean }[];
 }
 
 // ─── Category ────────────────────────────────────────────────────────────

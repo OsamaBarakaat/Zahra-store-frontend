@@ -29,15 +29,22 @@ interface HeaderProps {
   initialFeatured?: Product[];
 }
 
-export default function Header({ initialCategories, initialFeatured }: HeaderProps) {
+export default function Header({
+  initialCategories,
+  initialFeatured,
+}: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [productsMenuOpen, setProductsMenuOpen] = useState(false);
   const [categoriesList, setCategoriesList] = useState<Category[]>(
-    initialCategories && initialCategories.length > 0 ? initialCategories : fallbackCategories
+    initialCategories && initialCategories.length > 0
+      ? initialCategories
+      : fallbackCategories
   );
   const [menuFeatured, setMenuFeatured] = useState<Product[]>(
-    initialFeatured && initialFeatured.length > 0 ? initialFeatured.slice(0, 3) : fallbackProducts.slice(0, 3)
+    initialFeatured && initialFeatured.length > 0
+      ? initialFeatured.slice(0, 3)
+      : fallbackProducts.slice(0, 3)
   );
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -102,7 +109,7 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
           >
             <div className="relative w-28 h-12 sm:w-32 sm:h-14">
               <Image
-                src="/logo/zahra-logo.png"
+                src="/logo/zahra-logoo.png"
                 alt="زهره ستور"
                 fill
                 priority
@@ -141,7 +148,9 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
                 <ChevronDown
                   size={15}
                   className={`transition-transform duration-300 ${
-                    productsMenuOpen ? "rotate-180 text-white" : "text-[#9E8075]"
+                    productsMenuOpen
+                      ? "rotate-180 text-white"
+                      : "text-[#9E8075]"
                   }`}
                 />
               </Link>
@@ -153,9 +162,7 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
 
               {/* Apple-style Luxury Mega Menu */}
               {productsMenuOpen && (
-                <div
-                  className="absolute top-[calc(100%+8px)] right-1/2 translate-x-1/2 w-[840px] max-w-[94vw] bg-white/95 backdrop-blur-2xl rounded-3xl border border-[#EDE0D4] shadow-[0_20px_60px_rgba(26,12,8,0.14)] p-8 transition-all duration-300 animate-in fade-in zoom-in-95 z-50 text-right"
-                >
+                <div className="absolute top-[calc(100%+8px)] right-1/2 translate-x-1/2 w-[840px] max-w-[94vw] bg-white/95 backdrop-blur-2xl rounded-3xl border border-[#EDE0D4] shadow-[0_20px_60px_rgba(26,12,8,0.14)] p-8 transition-all duration-300 animate-in fade-in zoom-in-95 z-50 text-right">
                   <div className="grid grid-cols-12 gap-8 items-start">
                     {/* Column 1: Categories (5 cols) */}
                     <div className="col-span-5 border-l border-[#F5EDE6] pl-6">
@@ -176,7 +183,7 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
                             <div className="flex items-center gap-3">
                               <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200 group-hover:scale-105 transition-transform">
                                 <Image
-                                  src={cat.image || "/logo/zahra-logo.png"}
+                                  src={cat.image || "/logo/zahra-logoo.png"}
                                   alt={cat.name}
                                   fill
                                   sizes="40px"
@@ -211,7 +218,10 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
                       </div>
                       <div className="flex flex-col gap-3">
                         {menuFeatured.map((p) => {
-                          const primaryImg = p.images?.find((img) => img.is_primary)?.url || p.images?.[0]?.url || "/logo/zahra-logo.png";
+                          const primaryImg =
+                            p.images?.find((img) => img.is_primary)?.url ||
+                            p.images?.[0]?.url ||
+                            "/logo/zahra-logoo.png";
                           return (
                             <Link
                               key={p.id}
@@ -249,9 +259,15 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
                         <span className="text-[10px] font-bold bg-white/20 px-2.5 py-1 rounded-full inline-block mb-3">
                           كود خصم حصري 🏷️
                         </span>
-                        <h4 className="text-sm font-black mb-2">وفّري 10% إضافية</h4>
+                        <h4 className="text-sm font-black mb-2">
+                          وفّري 10% إضافية
+                        </h4>
                         <p className="text-[11px] text-white/85 mb-4 leading-relaxed">
-                          استخدمي كود <strong className="text-white underline">ZAHRA10</strong> عند الدفع.
+                          استخدمي كود{" "}
+                          <strong className="text-white underline">
+                            ZAHRA10
+                          </strong>{" "}
+                          عند الدفع.
                         </p>
                         <Link
                           href="/offers"
@@ -356,7 +372,11 @@ export default function Header({ initialCategories, initialFeatured }: HeaderPro
       </header>
 
       {/* Slide-in Mobile Drawer */}
-      <MobileDrawer isOpen={mobileOpen} onClose={() => setMobileOpen(false)} categories={categoriesList} />
+      <MobileDrawer
+        isOpen={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        categories={categoriesList}
+      />
     </>
   );
 }

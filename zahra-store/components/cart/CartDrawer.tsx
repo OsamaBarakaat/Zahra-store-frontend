@@ -3,7 +3,15 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  X,
+  Trash2,
+  Plus,
+  Minus,
+  ShoppingBag,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { formatPrice } from "@/lib/utils/format";
 
@@ -97,7 +105,14 @@ export default function CartDrawer() {
               <ShoppingBag size={18} />
             </div>
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "var(--color-text)" }}>
+              <h3
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  margin: 0,
+                  color: "var(--color-text)",
+                }}
+              >
                 سلة التسوق
               </h3>
               <span style={{ fontSize: 12, color: "var(--color-muted)" }}>
@@ -156,10 +171,24 @@ export default function CartDrawer() {
             >
               <ShoppingBag size={36} />
             </div>
-            <h4 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: "var(--color-text)" }}>
+            <h4
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                marginBottom: 8,
+                color: "var(--color-text)",
+              }}
+            >
               سلتك فارغة حالياً
             </h4>
-            <p style={{ fontSize: 14, color: "var(--color-muted)", maxWidth: 240, marginBottom: 24 }}>
+            <p
+              style={{
+                fontSize: 14,
+                color: "var(--color-muted)",
+                maxWidth: 240,
+                marginBottom: 24,
+              }}
+            >
               استكشفي أحدث مفروشاتنا وبياضاتنا واختاري ما يناسب بيتك وأناقتك.
             </p>
             <button
@@ -187,7 +216,9 @@ export default function CartDrawer() {
               }}
             >
               {items.map((item) => {
-                const variantDetails = Object.entries(item.selectedVariants || {})
+                const variantDetails = Object.entries(
+                  item.selectedVariants || {}
+                )
                   .map(([k, v]) => `${v}`)
                   .join(" • ");
 
@@ -215,7 +246,7 @@ export default function CartDrawer() {
                       }}
                     >
                       <Image
-                        src={item.image || "/logo/zahra-logo.png"}
+                        src={item.image || "/logo/zahra-logoo.png"}
                         alt={item.name}
                         fill
                         sizes="72px"
@@ -224,9 +255,24 @@ export default function CartDrawer() {
                     </div>
 
                     {/* Item Details */}
-                    <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            gap: 8,
+                          }}
+                        >
                           <Link
                             href={`/products/${item.slug}`}
                             onClick={closeCart}
@@ -257,25 +303,73 @@ export default function CartDrawer() {
                         </div>
 
                         {variantDetails && (
-                          <span style={{ fontSize: 12, color: "var(--color-muted)", marginTop: 2, display: "block" }}>
+                          <span
+                            style={{
+                              fontSize: 12,
+                              color: "var(--color-muted)",
+                              marginTop: 2,
+                              display: "block",
+                            }}
+                          >
                             {variantDetails}
                           </span>
                         )}
 
                         {item.customChairImage && (
-                          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                            <div style={{ position: "relative", width: 32, height: 32, borderRadius: 6, overflow: "hidden", border: "1px solid var(--color-border)", flexShrink: 0 }}>
-                              <Image src={item.customChairImage} alt="صورة كرسي العميل" fill style={{ objectFit: "cover" }} />
+                          <div
+                            style={{
+                              marginTop: 6,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 6,
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: "relative",
+                                width: 32,
+                                height: 32,
+                                borderRadius: 6,
+                                overflow: "hidden",
+                                border: "1px solid var(--color-border)",
+                                flexShrink: 0,
+                              }}
+                            >
+                              <Image
+                                src={item.customChairImage}
+                                alt="صورة كرسي العميل"
+                                fill
+                                style={{ objectFit: "cover" }}
+                              />
                             </div>
-                            <span style={{ fontSize: 11, color: "var(--color-primary)", fontWeight: 700 }}>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                color: "var(--color-primary)",
+                                fontWeight: 700,
+                              }}
+                            >
                               📸 صورة كرسي العميل مرفقة
                             </span>
                           </div>
                         )}
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-                        <span style={{ fontSize: 15, fontWeight: 700, color: "var(--color-primary)" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginTop: 8,
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 15,
+                            fontWeight: 700,
+                            color: "var(--color-primary)",
+                          }}
+                        >
                           {formatPrice(item.price * item.quantity)}
                         </span>
 
@@ -292,7 +386,9 @@ export default function CartDrawer() {
                           }}
                         >
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity - 1)
+                            }
                             aria-label="تقليل الكمية"
                             style={{
                               background: "none",
@@ -308,11 +404,20 @@ export default function CartDrawer() {
                           >
                             <Minus size={13} />
                           </button>
-                          <span style={{ fontSize: 13, fontWeight: 700, minWidth: 16, textAlign: "center" }}>
+                          <span
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 700,
+                              minWidth: 16,
+                              textAlign: "center",
+                            }}
+                          >
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity + 1)
+                            }
                             aria-label="زيادة الكمية"
                             style={{
                               background: "none",
@@ -345,13 +450,34 @@ export default function CartDrawer() {
                 boxShadow: "0 -4px 16px rgba(0,0,0,0.03)",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 14, color: "var(--color-text-soft)" }}>المجموع الفرعي</span>
-                <span style={{ fontSize: 17, fontWeight: 800, color: "var(--color-primary)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 6,
+                }}
+              >
+                <span style={{ fontSize: 14, color: "var(--color-text-soft)" }}>
+                  المجموع الفرعي
+                </span>
+                <span
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 800,
+                    color: "var(--color-primary)",
+                  }}
+                >
                   {formatPrice(subtotal)}
                 </span>
               </div>
-              <p style={{ fontSize: 12, color: "var(--color-muted)", marginBottom: 12 }}>
+              <p
+                style={{
+                  fontSize: 12,
+                  color: "var(--color-muted)",
+                  marginBottom: 12,
+                }}
+              >
                 يتم حساب تكلفة الشحن بدقة في الخطوة التالية حسب محافظتك.
               </p>
 
@@ -371,10 +497,14 @@ export default function CartDrawer() {
                 }}
               >
                 <span style={{ fontSize: 15 }}>⚡</span>
-                <span>خصم 50% على الشحن عند الدفع بإنستاباي أو فودافون كاش</span>
+                <span>
+                  خصم 50% على الشحن عند الدفع بإنستاباي أو فودافون كاش
+                </span>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
                 <button
                   onClick={handleCheckout}
                   className="btn-primary"

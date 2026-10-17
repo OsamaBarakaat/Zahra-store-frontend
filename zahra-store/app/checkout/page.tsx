@@ -6,9 +6,18 @@ import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { formatPrice } from "@/lib/utils/format";
-import { isValidEgyptianPhone, validateCheckoutForm } from "@/lib/utils/validation";
+import {
+  isValidEgyptianPhone,
+  validateCheckoutForm,
+} from "@/lib/utils/validation";
 import { EGYPTIAN_GOVERNORATES, PaymentMethod } from "@/lib/types";
-import { OrderService, ShippingService, ShippingZone, CouponService, CouponValidationResult } from "@/lib/services/api";
+import {
+  OrderService,
+  ShippingService,
+  ShippingZone,
+  CouponService,
+  CouponValidationResult,
+} from "@/lib/services/api";
 import {
   ChevronDown,
   ChevronUp,
@@ -62,7 +71,8 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
-  const [couponDetails, setCouponDetails] = useState<CouponValidationResult | null>(null);
+  const [couponDetails, setCouponDetails] =
+    useState<CouponValidationResult | null>(null);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,14 +92,42 @@ export default function CheckoutPage() {
   // Dynamic Shipping Calculation by Egyptian Governorate (Live API + Fallback)
   const baseShippingCost = useMemo(() => {
     const gov = formData.governorate;
-    const match = shippingZones.find((z) => z.governorate_name_ar === gov && z.is_active);
+    const match = shippingZones.find(
+      (z) => z.governorate_name_ar === gov && z.is_active
+    );
     if (match) return match.shipping_fee;
 
     if (gov === "القاهرة" || gov === "الجيزة") return 65;
-    if (["الإسكندرية", "القليوبية", "الغربية", "المنوفية", "الدقهلية", "الشرقية", "كفر الشيخ", "البحيرة", "دمياط"].includes(gov)) {
+    if (
+      [
+        "الإسكندرية",
+        "القليوبية",
+        "الغربية",
+        "المنوفية",
+        "الدقهلية",
+        "الشرقية",
+        "كفر الشيخ",
+        "البحيرة",
+        "دمياط",
+      ].includes(gov)
+    ) {
       return 75;
     }
-    if (["بورسعيد", "الإسماعيلية", "السويس", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان"].includes(gov)) {
+    if (
+      [
+        "بورسعيد",
+        "الإسماعيلية",
+        "السويس",
+        "الفيوم",
+        "بني سويف",
+        "المنيا",
+        "أسيوط",
+        "سوهاج",
+        "قنا",
+        "الأقصر",
+        "أسوان",
+      ].includes(gov)
+    ) {
       return 85;
     }
     // Frontier governorates
@@ -97,7 +135,8 @@ export default function CheckoutPage() {
   }, [formData.governorate, shippingZones]);
 
   // Apply 50% discount on shipping for electronic payments (InstaPay, Vodafone Cash & E-wallets)
-  const isElectronicPayment = paymentMethod === "instapay" || paymentMethod === "vodafone_cash";
+  const isElectronicPayment =
+    paymentMethod === "instapay" || paymentMethod === "vodafone_cash";
   const shippingDiscount = useMemo(() => {
     if (isElectronicPayment) {
       return Math.round(baseShippingCost * 0.5);
@@ -126,7 +165,9 @@ export default function CheckoutPage() {
         setDiscountAmount(result.discountAmount);
         setAppliedCoupon(result.code);
         setCouponDetails(result);
-        toast.success(result.message || `تم تطبيق كود الخصم ${result.code} بنجاح!`);
+        toast.success(
+          result.message || `تم تطبيق كود الخصم ${result.code} بنجاح!`
+        );
       }
     } catch (err: any) {
       toast.error(err.message || "كود الخصم غير صحيح أو منتهي الصلاحية");
@@ -186,10 +227,12 @@ export default function CheckoutPage() {
     try {
       const primaryContact = (formData.contact || "").trim();
       const secondaryPhone = (formData.phone || "").trim();
-      const contactPhone = primaryContact.includes("@") 
-        ? (secondaryPhone || "") 
-        : (primaryContact || secondaryPhone || "");
-      const contactEmail = primaryContact.includes("@") ? primaryContact : undefined;
+      const contactPhone = primaryContact.includes("@")
+        ? secondaryPhone || ""
+        : primaryContact || secondaryPhone || "";
+      const contactEmail = primaryContact.includes("@")
+        ? primaryContact
+        : undefined;
 
       const order = await OrderService.createOrder({
         items,
@@ -230,7 +273,9 @@ export default function CheckoutPage() {
     return (
       <div className="container-zahra py-16 text-center">
         <h1 className="text-xl font-bold mb-4">لا توجد منتجات لإتمام الطلب</h1>
-        <Link href="/products" className="btn-primary">العودة للتسوق</Link>
+        <Link href="/products" className="btn-primary">
+          العودة للتسوق
+        </Link>
       </div>
     );
   }
@@ -241,9 +286,18 @@ export default function CheckoutPage() {
       <div className="container-zahra max-w-5xl mb-8 sm:mb-12">
         <div className="flex items-center justify-between pb-5 border-b border-[#EDE0D4]">
           <Link href="/" className="relative w-28 h-12 sm:w-32 sm:h-14">
-            <Image src="/logo/zahra-logo.png" alt="زهره ستور" fill className="object-contain object-right" priority />
+            <Image
+              src="/logo/zahra-logoo.png"
+              alt="زهره ستور"
+              fill
+              className="object-contain object-right"
+              priority
+            />
           </Link>
-          <Link href="/cart" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#8B1A2E] hover:underline">
+          <Link
+            href="/cart"
+            className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#8B1A2E] hover:underline"
+          >
             <ShoppingBag size={18} />
             <span>العودة لسلة التسوق</span>
           </Link>
@@ -259,7 +313,11 @@ export default function CheckoutPage() {
           <div className="flex items-center gap-2.5 text-xs sm:text-sm font-bold text-[#8B1A2E]">
             <ShoppingBag size={18} />
             <span>ملخص الطلب ({itemCount} منتج)</span>
-            {summaryExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            {summaryExpanded ? (
+              <ChevronUp size={16} />
+            ) : (
+              <ChevronDown size={16} />
+            )}
           </div>
           <span className="text-base sm:text-lg font-black text-[#1A0C08]">
             {formatPrice(grandTotal)}
@@ -269,22 +327,37 @@ export default function CheckoutPage() {
         {summaryExpanded && (
           <div className="mt-3 p-5 rounded-2xl bg-white border border-[#EDE0D4] shadow-xs space-y-4">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center gap-3 py-2 border-b border-stone-100 last:border-0">
+              <div
+                key={item.id}
+                className="flex items-center gap-3 py-2 border-b border-stone-100 last:border-0"
+              >
                 <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100">
-                  <Image src={item.image || "/logo/zahra-logo.png"} alt={item.name} fill className="object-cover" />
+                  <Image
+                    src={item.image || "/logo/zahra-logoo.png"}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
                   <span className="absolute top-0 right-0 w-5 h-5 bg-[#8B1A2E] text-white text-[10px] font-bold rounded-bl-lg flex items-center justify-center">
                     {item.quantity}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-[#1A0C08] truncate">{item.name}</p>
+                  <p className="text-xs font-bold text-[#1A0C08] truncate">
+                    {item.name}
+                  </p>
                   <p className="text-[11px] text-[#9E8075]">
                     {Object.values(item.selectedVariants || {}).join(" • ")}
                   </p>
                   {item.customChairImage && (
                     <div className="flex items-center gap-1.5 mt-1">
                       <div className="relative w-6 h-6 rounded-md overflow-hidden border border-stone-200 bg-stone-100 flex-shrink-0">
-                        <Image src={item.customChairImage} alt="صورة الكرسي" fill className="object-cover" />
+                        <Image
+                          src={item.customChairImage}
+                          alt="صورة الكرسي"
+                          fill
+                          className="object-cover"
+                        />
                       </div>
                       <span className="text-[10px] font-bold text-[#8B1A2E]">
                         📸 صورة الكرسي مرفقة
@@ -346,7 +419,9 @@ export default function CheckoutPage() {
                     disabled={isValidatingCoupon || !couponCode.trim()}
                     className="btn-outline h-9 px-3 text-xs font-bold flex-shrink-0 cursor-pointer disabled:opacity-50 flex items-center gap-1"
                   >
-                    {isValidatingCoupon ? <Loader2 size={12} className="animate-spin" /> : null}
+                    {isValidatingCoupon ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : null}
                     <span>تطبيق</span>
                   </button>
                 </form>
@@ -356,7 +431,9 @@ export default function CheckoutPage() {
             <div className="pt-3 text-xs sm:text-sm space-y-2 text-[#5C4A42]">
               <div className="flex justify-between">
                 <span>المجموع الفرعي</span>
-                <span className="font-bold text-[#1A0C08]">{formatPrice(subtotal)}</span>
+                <span className="font-bold text-[#1A0C08]">
+                  {formatPrice(subtotal)}
+                </span>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50/70 p-1.5 rounded-lg border border-emerald-100">
@@ -372,18 +449,25 @@ export default function CheckoutPage() {
                       {formatPrice(baseShippingCost)}
                     </span>
                   )}
-                  <span className="font-bold text-[#1A0C08]">{formatPrice(shippingCost)}</span>
+                  <span className="font-bold text-[#1A0C08]">
+                    {formatPrice(shippingCost)}
+                  </span>
                 </div>
               </div>
               {isElectronicPayment && (
                 <div className="text-[10px] text-emerald-800 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-200 flex items-center gap-1.5">
-                  <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                  <CheckCircle2
+                    size={13}
+                    className="text-emerald-600 shrink-0"
+                  />
                   <span>خصم 50% على مصاريف الشحن مفعّل!</span>
                 </div>
               )}
               <div className="pt-3 border-t border-stone-200 flex justify-between text-sm sm:text-base font-black text-[#1A0C08]">
                 <span>الإجمالي النهائي</span>
-                <span className="text-lg text-[#8B1A2E]">{formatPrice(grandTotal)}</span>
+                <span className="text-lg text-[#8B1A2E]">
+                  {formatPrice(grandTotal)}
+                </span>
               </div>
             </div>
           </div>
@@ -394,19 +478,27 @@ export default function CheckoutPage() {
       <div className="container-zahra max-w-5xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Form (7 cols on desktop) */}
-          <form onSubmit={handleSubmitOrder} className="lg:col-span-7 space-y-6 sm:space-y-8">
+          <form
+            onSubmit={handleSubmitOrder}
+            className="lg:col-span-7 space-y-6 sm:space-y-8"
+          >
             {/* 1. Contact Section */}
             <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#EDE0D4] shadow-xs">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-base sm:text-lg font-black text-[#1A0C08]">
                   بيانات التواصل
                 </h2>
-                <span className="text-xs text-[#9E8075]">تسوق سريع بدون تسجيل حساب</span>
+                <span className="text-xs text-[#9E8075]">
+                  تسوق سريع بدون تسجيل حساب
+                </span>
               </div>
 
               <div>
                 <label className="text-xs sm:text-sm font-bold text-[#5C4A42] block mb-2">
-                  رقم الهاتف أو البريد الإلكتروني <span className="text-stone-400 font-normal text-xs">(اختياري)</span>
+                  رقم الهاتف أو البريد الإلكتروني{" "}
+                  <span className="text-stone-400 font-normal text-xs">
+                    (اختياري)
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -424,7 +516,9 @@ export default function CheckoutPage() {
                 <input
                   type="checkbox"
                   checked={formData.newsletter}
-                  onChange={(e) => setFormData({ ...formData, newsletter: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, newsletter: e.target.checked })
+                  }
                   className="w-4 h-4 rounded text-[#8B1A2E] accent-[#8B1A2E]"
                 />
                 <span className="text-xs sm:text-sm text-[#5C4A42]">
@@ -464,13 +558,18 @@ export default function CheckoutPage() {
                       value={formData.firstName}
                       onChange={(e) => {
                         setFormData({ ...formData, firstName: e.target.value });
-                        if (errors.firstName) setErrors({ ...errors, firstName: "" });
+                        if (errors.firstName)
+                          setErrors({ ...errors, firstName: "" });
                       }}
                       placeholder="مثال: ياسمين"
-                      className={`input-field ${errors.firstName ? "error" : ""}`}
+                      className={`input-field ${
+                        errors.firstName ? "error" : ""
+                      }`}
                     />
                     {errors.firstName && (
-                      <p className="text-xs text-red-600 font-bold mt-1.5">{errors.firstName}</p>
+                      <p className="text-xs text-red-600 font-bold mt-1.5">
+                        {errors.firstName}
+                      </p>
                     )}
                   </div>
 
@@ -483,13 +582,18 @@ export default function CheckoutPage() {
                       value={formData.lastName}
                       onChange={(e) => {
                         setFormData({ ...formData, lastName: e.target.value });
-                        if (errors.lastName) setErrors({ ...errors, lastName: "" });
+                        if (errors.lastName)
+                          setErrors({ ...errors, lastName: "" });
                       }}
                       placeholder="مثال: محمد"
-                      className={`input-field ${errors.lastName ? "error" : ""}`}
+                      className={`input-field ${
+                        errors.lastName ? "error" : ""
+                      }`}
                     />
                     {errors.lastName && (
-                      <p className="text-xs text-red-600 font-bold mt-1.5">{errors.lastName}</p>
+                      <p className="text-xs text-red-600 font-bold mt-1.5">
+                        {errors.lastName}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -503,7 +607,12 @@ export default function CheckoutPage() {
                     <div className="relative">
                       <select
                         value={formData.governorate}
-                        onChange={(e) => setFormData({ ...formData, governorate: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            governorate: e.target.value,
+                          })
+                        }
                         className="input-field cursor-pointer font-bold text-[#1A0C08]"
                       >
                         {EGYPTIAN_GOVERNORATES.map((gov) => (
@@ -517,7 +626,8 @@ export default function CheckoutPage() {
 
                   <div>
                     <label className="text-xs font-bold text-[#5C4A42] block mb-1.5">
-                      المدينة / المركز / الحي <span className="text-red-500">*</span>
+                      المدينة / المركز / الحي{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -530,7 +640,9 @@ export default function CheckoutPage() {
                       className={`input-field ${errors.city ? "error" : ""}`}
                     />
                     {errors.city && (
-                      <p className="text-[11px] text-red-600 font-bold mt-1">{errors.city}</p>
+                      <p className="text-[11px] text-red-600 font-bold mt-1">
+                        {errors.city}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -538,7 +650,8 @@ export default function CheckoutPage() {
                 {/* Detailed Street Address */}
                 <div>
                   <label className="text-xs font-bold text-[#5C4A42] block mb-1.5">
-                    العنوان بالتفصيل: الشارع ورقم العمارة <span className="text-red-500">*</span>
+                    العنوان بالتفصيل: الشارع ورقم العمارة{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -551,7 +664,9 @@ export default function CheckoutPage() {
                     className={`input-field ${errors.street ? "error" : ""}`}
                   />
                   {errors.street && (
-                    <p className="text-[11px] text-red-600 font-bold mt-1">{errors.street}</p>
+                    <p className="text-[11px] text-red-600 font-bold mt-1">
+                      {errors.street}
+                    </p>
                   )}
                 </div>
 
@@ -564,7 +679,9 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       value={formData.apartment}
-                      onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, apartment: e.target.value })
+                      }
                       placeholder="مثال: شقة 4، الدور الثاني"
                       className="input-field"
                     />
@@ -577,7 +694,9 @@ export default function CheckoutPage() {
                     <input
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
                       placeholder="01xxxxxxxxx"
                       className="input-field"
                     />
@@ -589,7 +708,9 @@ export default function CheckoutPage() {
                   <input
                     type="checkbox"
                     checked={formData.saveInfo}
-                    onChange={(e) => setFormData({ ...formData, saveInfo: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, saveInfo: e.target.checked })
+                    }
                     className="w-4 h-4 rounded text-[#8B1A2E] accent-[#8B1A2E]"
                   />
                   <span className="text-xs text-[#5C4A42]">
@@ -664,10 +785,16 @@ export default function CheckoutPage() {
                         لتأكيد طلبك وتجهيزه بعناية:
                       </p>
                       <p>
-                        قد تحتاج بعض الطلبات إلى دفع عربون بسيط لتأكيد الجدية وسرعة الشحن. بعد إتمام الطلب، سيتواصل معكِ فريق خدمة العملاء لتأكيد التفاصيل. يُخصم مبلغ العربون من إجمالي الطلب، ويتم دفع المبلغ المتبقي عند الاستلام والمعاينة.
+                        قد تحتاج بعض الطلبات إلى دفع عربون بسيط لتأكيد الجدية
+                        وسرعة الشحن. بعد إتمام الطلب، سيتواصل معكِ فريق خدمة
+                        العملاء لتأكيد التفاصيل. يُخصم مبلغ العربون من إجمالي
+                        الطلب، ويتم دفع المبلغ المتبقي عند الاستلام والمعاينة.
                       </p>
                       <div className="mt-2.5 pt-2 border-t border-[#EDE0D4] text-emerald-700 font-bold flex items-center gap-1.5 text-xs">
-                        <span>💡 نصيحة: ادفعي عبر إنستاباي أو فودافون كاش واحصلي على خصم 50% فوراً على مصاريف الشحن!</span>
+                        <span>
+                          💡 نصيحة: ادفعي عبر إنستاباي أو فودافون كاش واحصلي على
+                          خصم 50% فوراً على مصاريف الشحن!
+                        </span>
                       </div>
                     </div>
                   )}
@@ -703,14 +830,27 @@ export default function CheckoutPage() {
                   {paymentMethod === "vodafone_cash" && (
                     <div className="mt-4 p-4 rounded-xl bg-[#FDF8F5] border border-[#EDE0D4] space-y-3.5 text-xs sm:text-sm">
                       <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
-                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-                        <span>تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط بدلاً من {formatPrice(baseShippingCost)}!</span>
+                        <CheckCircle2
+                          size={16}
+                          className="text-emerald-600 shrink-0"
+                        />
+                        <span>
+                          تم تطبيق خصم 50% على مصاريف الشحن لتصبح{" "}
+                          <span className="tabular-nums font-black">
+                            {formatPrice(shippingCost)}
+                          </span>{" "}
+                          فقط بدلاً من {formatPrice(baseShippingCost)}!
+                        </span>
                       </div>
 
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
                         <div className="min-w-0">
-                          <span className="text-[#9E8075] block text-[11px] mb-0.5">رقم محفظة فودافون كاش:</span>
-                          <span className="text-sm sm:text-base font-black text-[#8B1A2E] font-mono select-all tracking-wider">01099887766</span>
+                          <span className="text-[#9E8075] block text-[11px] mb-0.5">
+                            رقم محفظة فودافون كاش:
+                          </span>
+                          <span className="text-sm sm:text-base font-black text-[#8B1A2E] font-mono select-all tracking-wider">
+                            01099887766
+                          </span>
                         </div>
                         <button
                           type="button"
@@ -720,13 +860,21 @@ export default function CheckoutPage() {
                           }}
                           className="shrink-0 self-start sm:self-auto inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-full border border-[#8B1A2E] text-[#8B1A2E] bg-white hover:bg-[#8B1A2E] hover:text-white transition-all text-xs font-bold cursor-pointer shadow-xs active:scale-95"
                         >
-                          {copiedVodafone ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-                          <span>{copiedVodafone ? "تم النسخ" : "نسخ الرقم"}</span>
+                          {copiedVodafone ? (
+                            <Check size={14} className="text-emerald-600" />
+                          ) : (
+                            <Copy size={14} />
+                          )}
+                          <span>
+                            {copiedVodafone ? "تم النسخ" : "نسخ الرقم"}
+                          </span>
                         </button>
                       </div>
 
                       <p className="text-[#5C4A42] leading-relaxed">
-                        حول المبلغ الإجمالي ({formatPrice(grandTotal)}) إلى الرقم أعلاه، ثم اكتبي رقم المحول أو رقم المعاملة بالأسفل:
+                        حول المبلغ الإجمالي ({formatPrice(grandTotal)}) إلى
+                        الرقم أعلاه، ثم اكتبي رقم المحول أو رقم المعاملة
+                        بالأسفل:
                       </p>
 
                       <input
@@ -770,14 +918,27 @@ export default function CheckoutPage() {
                   {paymentMethod === "instapay" && (
                     <div className="mt-4 p-4 rounded-xl bg-[#FDF8F5] border border-[#EDE0D4] space-y-3.5 text-xs sm:text-sm">
                       <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
-                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-                        <span>تم تطبيق خصم 50% على مصاريف الشحن لتصبح <span className="tabular-nums font-black">{formatPrice(shippingCost)}</span> فقط بدلاً من {formatPrice(baseShippingCost)}!</span>
+                        <CheckCircle2
+                          size={16}
+                          className="text-emerald-600 shrink-0"
+                        />
+                        <span>
+                          تم تطبيق خصم 50% على مصاريف الشحن لتصبح{" "}
+                          <span className="tabular-nums font-black">
+                            {formatPrice(shippingCost)}
+                          </span>{" "}
+                          فقط بدلاً من {formatPrice(baseShippingCost)}!
+                        </span>
                       </div>
 
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
                         <div className="min-w-0">
-                          <span className="text-[#9E8075] block text-[11px] mb-0.5">عنوان الدفع (IPA):</span>
-                          <span className="text-sm sm:text-base font-black text-[#8B1A2E] font-mono select-all break-all">zahrastore@instapay</span>
+                          <span className="text-[#9E8075] block text-[11px] mb-0.5">
+                            عنوان الدفع (IPA):
+                          </span>
+                          <span className="text-sm sm:text-base font-black text-[#8B1A2E] font-mono select-all break-all">
+                            zahrastore@instapay
+                          </span>
                         </div>
                         <button
                           type="button"
@@ -787,8 +948,14 @@ export default function CheckoutPage() {
                           }}
                           className="shrink-0 self-start sm:self-auto inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-full border border-[#8B1A2E] text-[#8B1A2E] bg-white hover:bg-[#8B1A2E] hover:text-white transition-all text-xs font-bold cursor-pointer shadow-xs active:scale-95"
                         >
-                          {copiedInsta ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-                          <span>{copiedInsta ? "تم النسخ" : "نسخ العنوان"}</span>
+                          {copiedInsta ? (
+                            <Check size={14} className="text-emerald-600" />
+                          ) : (
+                            <Copy size={14} />
+                          )}
+                          <span>
+                            {copiedInsta ? "تم النسخ" : "نسخ العنوان"}
+                          </span>
                         </button>
                       </div>
 
@@ -816,10 +983,14 @@ export default function CheckoutPage() {
                     type="radio"
                     name="billing"
                     checked={formData.sameBilling}
-                    onChange={() => setFormData({ ...formData, sameBilling: true })}
+                    onChange={() =>
+                      setFormData({ ...formData, sameBilling: true })
+                    }
                     className="w-4 h-4 accent-[#8B1A2E]"
                   />
-                  <span className="font-bold text-[#1A0C08]">مطابق لعنوان الشحن والتوصيل</span>
+                  <span className="font-bold text-[#1A0C08]">
+                    مطابق لعنوان الشحن والتوصيل
+                  </span>
                 </label>
 
                 <label className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl border border-stone-200 cursor-pointer hover:bg-stone-50 transition-colors">
@@ -827,10 +998,14 @@ export default function CheckoutPage() {
                     type="radio"
                     name="billing"
                     checked={!formData.sameBilling}
-                    onChange={() => setFormData({ ...formData, sameBilling: false })}
+                    onChange={() =>
+                      setFormData({ ...formData, sameBilling: false })
+                    }
                     className="w-4 h-4 accent-[#8B1A2E]"
                   />
-                  <span className="font-bold text-[#1A0C08]">استخدام عنوان فوترة مختلف</span>
+                  <span className="font-bold text-[#1A0C08]">
+                    استخدام عنوان فوترة مختلف
+                  </span>
                 </label>
 
                 {!formData.sameBilling && (
@@ -838,7 +1013,12 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       value={formData.differentBillingAddress}
-                      onChange={(e) => setFormData({ ...formData, differentBillingAddress: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          differentBillingAddress: e.target.value,
+                        })
+                      }
                       placeholder="العنوان البديل للفاتورة بالتفصيل"
                       className="input-field text-xs sm:text-sm"
                     />
@@ -853,7 +1033,11 @@ export default function CheckoutPage() {
               disabled={isSubmitting}
               className="btn-primary w-full h-15 sm:h-16 text-base sm:text-xl font-black flex items-center justify-center gap-3 shadow-xl shadow-[#8B1A2E]/25 hover:scale-[1.01] active:scale-98 disabled:opacity-50 transition-all"
             >
-              <span>{isSubmitting ? "جاري تأكيد الطلب..." : `تأكيد وإتمام الطلب — ${formatPrice(grandTotal)}`}</span>
+              <span>
+                {isSubmitting
+                  ? "جاري تأكيد الطلب..."
+                  : `تأكيد وإتمام الطلب — ${formatPrice(grandTotal)}`}
+              </span>
               <CheckCircle2 size={22} />
             </button>
           </form>
@@ -869,20 +1053,32 @@ export default function CheckoutPage() {
               {items.map((item) => (
                 <div key={item.id} className="flex items-center gap-3">
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200">
-                    <Image src={item.image || "/logo/zahra-logo.png"} alt={item.name} fill className="object-cover" />
+                    <Image
+                      src={item.image || "/logo/zahra-logoo.png"}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
                     <span className="absolute top-0 right-0 w-5 h-5 bg-[#8B1A2E] text-white text-[10px] font-black rounded-bl-lg flex items-center justify-center">
                       {item.quantity}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-[#1A0C08] truncate">{item.name}</p>
+                    <p className="text-xs font-bold text-[#1A0C08] truncate">
+                      {item.name}
+                    </p>
                     <p className="text-[11px] text-[#9E8075] mt-0.5">
                       {Object.values(item.selectedVariants || {}).join(" • ")}
                     </p>
                     {item.customChairImage && (
                       <div className="flex items-center gap-1.5 mt-1.5">
                         <div className="relative w-7 h-7 rounded-md overflow-hidden border border-stone-200 bg-stone-100 flex-shrink-0">
-                          <Image src={item.customChairImage} alt="صورة الكرسي" fill className="object-cover" />
+                          <Image
+                            src={item.customChairImage}
+                            alt="صورة الكرسي"
+                            fill
+                            className="object-cover"
+                          />
                         </div>
                         <span className="text-[10px] font-bold text-[#8B1A2E] bg-[#FDF8F5] px-1.5 py-0.5 rounded border border-[#EDE0D4]">
                           📸 صورة الكرسي مرفقة للطلب العمولة
@@ -969,7 +1165,9 @@ export default function CheckoutPage() {
             <div className="space-y-2.5 text-xs sm:text-sm text-[#5C4A42] pt-4 border-t border-[#EDE0D4]">
               <div className="flex justify-between">
                 <span>المجموع الفرعي للطلب</span>
-                <span className="font-bold text-[#1A0C08]">{formatPrice(subtotal)}</span>
+                <span className="font-bold text-[#1A0C08]">
+                  {formatPrice(subtotal)}
+                </span>
               </div>
 
               {discountAmount > 0 && (
@@ -990,22 +1188,36 @@ export default function CheckoutPage() {
                       {formatPrice(baseShippingCost)}
                     </span>
                   )}
-                  <span className="font-bold text-[#1A0C08]">{formatPrice(shippingCost)}</span>
+                  <span className="font-bold text-[#1A0C08]">
+                    {formatPrice(shippingCost)}
+                  </span>
                 </div>
               </div>
 
               {isElectronicPayment && (
                 <div className="text-[11px] text-emerald-800 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
-                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                  <CheckCircle2
+                    size={16}
+                    className="text-emerald-600 shrink-0"
+                  />
                   <span>
-                    ⚡ وفرت {formatPrice(shippingDiscount)} (خصم 50% على الشحن) باختيارك {paymentMethod === "instapay" ? "إنستاباي" : "فودافون كاش والمحافظ"}!
+                    ⚡ وفرت {formatPrice(shippingDiscount)} (خصم 50% على الشحن)
+                    باختيارك{" "}
+                    {paymentMethod === "instapay"
+                      ? "إنستاباي"
+                      : "فودافون كاش والمحافظ"}
+                    !
                   </span>
                 </div>
               )}
 
               <div className="pt-3 border-t border-stone-200 flex justify-between items-baseline">
-                <span className="text-sm sm:text-base font-black text-[#1A0C08]">المبلغ الإجمالي</span>
-                <span className="text-2xl font-black text-[#8B1A2E]">{formatPrice(grandTotal)}</span>
+                <span className="text-sm sm:text-base font-black text-[#1A0C08]">
+                  المبلغ الإجمالي
+                </span>
+                <span className="text-2xl font-black text-[#8B1A2E]">
+                  {formatPrice(grandTotal)}
+                </span>
               </div>
             </div>
           </div>
@@ -1013,13 +1225,21 @@ export default function CheckoutPage() {
 
         {/* Footer Policy Links matching reference screen */}
         <div className="mt-12 pt-6 border-t border-[#EDE0D4] flex flex-wrap items-center justify-center gap-4 text-xs text-[#9E8075]">
-          <Link href="/return-policy" className="hover:underline">سياسة الاستبدال والاسترجاع</Link>
+          <Link href="/return-policy" className="hover:underline">
+            سياسة الاستبدال والاسترجاع
+          </Link>
           <span>•</span>
-          <Link href="/privacy-policy" className="hover:underline">سياسة الخصوصية</Link>
+          <Link href="/privacy-policy" className="hover:underline">
+            سياسة الخصوصية
+          </Link>
           <span>•</span>
-          <Link href="/terms" className="hover:underline">الشروط والأحكام</Link>
+          <Link href="/terms" className="hover:underline">
+            الشروط والأحكام
+          </Link>
           <span>•</span>
-          <Link href="/shipping-info" className="hover:underline">معلومات التوصيل والشحن</Link>
+          <Link href="/shipping-info" className="hover:underline">
+            معلومات التوصيل والشحن
+          </Link>
         </div>
       </div>
     </div>

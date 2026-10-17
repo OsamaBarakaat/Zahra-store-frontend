@@ -12,7 +12,11 @@ import {
   ArrowLeft,
   Clock,
 } from "lucide-react";
-import { InstagramIcon, FacebookIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
+import {
+  InstagramIcon,
+  FacebookIcon,
+  WhatsAppIcon,
+} from "@/components/icons/SocialIcons";
 
 const footerCategories = [
   { href: "/categories/bedding", label: "أطقم بياضات فاخرة" },
@@ -103,7 +107,7 @@ export default function Footer() {
                 <Link href="/" className="inline-block mb-4">
                   <div className="relative w-36 h-16">
                     <Image
-                      src="/logo/zahra-logo.png"
+                      src="/logo/zahra-logoo.png"
                       alt="زهره ستور"
                       fill
                       className="object-contain object-right brightness-0 invert"
@@ -111,7 +115,9 @@ export default function Footer() {
                   </div>
                 </Link>
                 <p className="text-sm text-white/75 leading-relaxed max-w-sm mb-6">
-                  متجركِ المفضل للأناقة والمفروشات المنزلية الراقية في مصر. نقدم أجود الخامات القطنية للبياضات، الكنب، الإسدالات، والطرح بلمسة عصرية تناسب كل بيت مصري.
+                  متجركِ المفضل للأناقة والمفروشات المنزلية الراقية في مصر. نقدم
+                  أجود الخامات القطنية للبياضات، الكنب، الإسدالات، والطرح بلمسة
+                  عصرية تناسب كل بيت مصري.
                 </p>
 
                 {/* Direct Hotline Badge */}
@@ -143,7 +149,9 @@ export default function Footer() {
 
               {/* Social Media Pills */}
               <div>
-                <span className="text-xs text-white/60 block mb-2.5">تابعينا على السوشيال ميديا:</span>
+                <span className="text-xs text-white/60 block mb-2.5">
+                  تابعينا على السوشيال ميديا:
+                </span>
                 <div className="flex items-center gap-2.5">
                   <a
                     href="https://instagram.com"
@@ -233,8 +241,12 @@ export default function Footer() {
               </ul>
 
               <div className="mt-8 pt-4 border-t border-white/10">
-                <span className="text-[11px] text-white/50 block">مقر الإدارة:</span>
-                <span className="text-xs text-white/80 font-bold block mt-1">القاهرة، جمهورية مصر العربية</span>
+                <span className="text-[11px] text-white/50 block">
+                  مقر الإدارة:
+                </span>
+                <span className="text-xs text-white/80 font-bold block mt-1">
+                  القاهرة، جمهورية مصر العربية
+                </span>
               </div>
             </div>
           </div>
@@ -246,12 +258,15 @@ export default function Footer() {
         <div className="container-zahra">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right">
             <p className="text-xs text-white/60">
-              جميع الحقوق محفوظة © {new Date().getFullYear()} لمتجر <strong>زهره ستور</strong>. صنع بحب في مصر ❤️
+              جميع الحقوق محفوظة © {new Date().getFullYear()} لمتجر{" "}
+              <strong>زهره ستور</strong>. صنع بحب في مصر ❤️
             </p>
 
             {/* Payment methods badges */}
             <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="text-xs text-white/50 ml-1">طرق الدفع المتاحة:</span>
+              <span className="text-xs text-white/50 ml-1">
+                طرق الدفع المتاحة:
+              </span>
               <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-bold border border-white/10">
                 الدفع عند الاستلام (كاش)
               </span>

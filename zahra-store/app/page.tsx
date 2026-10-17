@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Sparkles, Flame } from "lucide-react";
 import HeroSection from "@/components/home/HeroSection";
 import CategorySlider from "@/components/home/CategorySlider";
-import ScrollSofaCover3D from "@/components/home/ScrollSofaCover3D";
+import BeforeAfterSection from "@/components/home/BeforeAfterSection";
 import OffersBanner from "@/components/home/OffersBanner";
 import WhyUsSection from "@/components/home/WhyUsSection";
 import SocialProofSection from "@/components/home/SocialProofSection";
@@ -28,8 +28,8 @@ export default async function HomePage() {
       {/* 2. Categories Section (Spacious Apple Cards) */}
       <CategorySlider categories={categories} />
 
-      {/* 3. Interactive Sofa Bedding Draping Experience (Spreads across sofa as you scroll down) */}
-      <ScrollSofaCover3D />
+      {/* 3. Before & After Interactive Sofa Comparison Slider */}
+      <BeforeAfterSection />
 
       {/* 4. Featured Products Grid (With Apple-style breathing room) */}
       <section className="py-24 sm:py-32 lg:py-40 bg-white">

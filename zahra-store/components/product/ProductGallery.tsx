@@ -8,18 +8,28 @@ interface ProductGalleryProps {
   productName: string;
 }
 
-export default function ProductGallery({ images, productName }: ProductGalleryProps) {
+export default function ProductGallery({
+  images,
+  productName,
+}: ProductGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const sortedImages = React.useMemo(() => {
     if (!images || images.length === 0) return [];
-    return [...images].sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
+    return [...images].sort(
+      (a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)
+    );
   }, [images]);
 
   if (!sortedImages || sortedImages.length === 0) {
     return (
       <div className="relative aspect-square w-full rounded-2xl bg-stone-100 overflow-hidden border border-[#EDE0D4]">
-        <Image src="/logo/zahra-logo.png" alt={productName} fill className="object-contain p-8" />
+        <Image
+          src="/logo/zahra-logoo.png"
+          alt={productName}
+          fill
+          className="object-contain p-8"
+        />
       </div>
     );
   }

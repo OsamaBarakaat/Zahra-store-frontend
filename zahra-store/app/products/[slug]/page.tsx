@@ -21,7 +21,10 @@ export async function generateMetadata({ params }: ProductPageProps) {
     };
   }
 
-  const primaryImage = product.images?.find((img) => img.is_primary)?.url || product.images?.[0]?.url || "/logo/zahra-logo.png";
+  const primaryImage =
+    product.images?.find((img) => img.is_primary)?.url ||
+    product.images?.[0]?.url ||
+    "/logo/zahra-logoo.png";
 
   return {
     title: `${product.name} | زهره ستور`,
@@ -49,10 +52,5 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   const related = getRelatedProducts(product, 4);
 
-  return (
-    <ProductDetailClient
-      product={product}
-      relatedProducts={related}
-    />
-  );
+  return <ProductDetailClient product={product} relatedProducts={related} />;
 }

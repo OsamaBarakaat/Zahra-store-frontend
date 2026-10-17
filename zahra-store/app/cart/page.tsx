@@ -20,7 +20,8 @@ import { useToastStore } from "@/lib/stores/toastStore";
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeItem, updateQuantity, getSubtotal, getItemCount } = useCartStore();
+  const { items, removeItem, updateQuantity, getSubtotal, getItemCount } =
+    useCartStore();
   const toast = useToastStore();
 
   const [couponCode, setCouponCode] = useState("");
@@ -62,7 +63,8 @@ export default function CartPage() {
             سلة التسوق فارغة
           </h1>
           <p className="text-sm text-[#9E8075] mb-6">
-            يبدو أنكِ لم تضيفي أي منتجات للسلة بعد. استكشفي أحدث تشكيلاتنا واختاري ما يسعدكِ.
+            يبدو أنكِ لم تضيفي أي منتجات للسلة بعد. استكشفي أحدث تشكيلاتنا
+            واختاري ما يسعدكِ.
           </p>
           <Link
             href="/products"
@@ -80,7 +82,10 @@ export default function CartPage() {
     <div className="container-zahra py-8 sm:py-12">
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#EDE0D4]">
         <h1 className="text-2xl sm:text-3xl font-black text-[#1A0C08]">
-          سلة المشتريات <span className="tabular-nums font-bold text-lg text-[#8B1A2E]">({itemCount} منتج)</span>
+          سلة المشتريات{" "}
+          <span className="tabular-nums font-bold text-lg text-[#8B1A2E]">
+            ({itemCount} منتج)
+          </span>
         </h1>
         <Link
           href="/products"
@@ -108,7 +113,7 @@ export default function CartPage() {
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden flex-shrink-0 bg-stone-100 border border-stone-200">
                     <Image
-                      src={item.image || "/logo/zahra-logo.png"}
+                      src={item.image || "/logo/zahra-logoo.png"}
                       alt={item.name}
                       fill
                       sizes="96px"
@@ -206,7 +211,9 @@ export default function CartPage() {
           <div className="space-y-3 mb-6 text-sm">
             <div className="flex justify-between text-[#5C4A42]">
               <span>المجموع الفرعي ({itemCount} قطع)</span>
-              <span className="font-bold text-[#1A0C08]">{formatPrice(subtotal)}</span>
+              <span className="font-bold text-[#1A0C08]">
+                {formatPrice(subtotal)}
+              </span>
             </div>
 
             {discountAmount > 0 && (
@@ -224,8 +231,12 @@ export default function CartPage() {
             </div>
 
             <div className="pt-3 border-t border-[#EDE0D4] flex justify-between items-baseline">
-              <span className="font-bold text-base text-[#1A0C08]">الإجمالي التقريبي</span>
-              <span className="text-2xl font-black text-[#8B1A2E]">{formatPrice(total)}</span>
+              <span className="font-bold text-base text-[#1A0C08]">
+                الإجمالي التقريبي
+              </span>
+              <span className="text-2xl font-black text-[#8B1A2E]">
+                {formatPrice(total)}
+              </span>
             </div>
           </div>
 
@@ -266,7 +277,10 @@ export default function CartPage() {
           {/* Trust Guarantees */}
           <div className="p-3.5 rounded-2xl bg-[#FDF8F5] border border-[#EDE0D4] text-xs text-[#5C4A42] flex items-center gap-2.5">
             <ShieldCheck size={20} className="text-[#8B1A2E] flex-shrink-0" />
-            <span>الدفع عند الاستلام متاح بعد المعاينة، أو عبر إنستاباي وفودافون كاش.</span>
+            <span>
+              الدفع عند الاستلام متاح بعد المعاينة، أو عبر إنستاباي وفودافون
+              كاش.
+            </span>
           </div>
         </div>
       </div>
